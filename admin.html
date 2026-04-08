@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理者ダッシュボード | Anomaly Marketing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #1a2340;
+      --cyan: #00b4d8;
+      --white: #ffffff;
+      --gray-400: #94a3b8;
+      --gray-600: #64748b;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --font-jp: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+      --font-mono: 'DM Mono', 'Courier New', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-jp);
+      background: var(--navy);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,180,216,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,180,216,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* PASSWORD */
+    #screen-pw {
+      flex: 1; display: flex;
+      align-items: center; justify-content: center;
+      padding: 2rem; position: relative; z-index: 1;
+    }
+    .pw-card {
+      background: rgba(36,48,85,0.85);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 2.5rem; width: 100%; max-width: 360px;
+      text-align: center;
+      animation: fadeIn 0.35s ease;
+    }
+    .pw-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .pw-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .pw-sub { color: var(--gray-400); font-size: 0.8rem; margin-bottom: 1.5rem; }
+    label { display: block; font-size: 0.72rem; font-weight: 500; color: var(--gray-400); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    input[type="password"] {
+      width: 100%; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px; padding: 0.75rem 1rem;
+      color: var(--white); font-family: var(--font-jp);
+      font-size: 0.9rem; outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    input:focus { border-color: var(--cyan); background: rgba(0,180,216,0.07); }
+    .pw-error { color: var(--danger); font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+    .btn-primary {
+      width: 100%; background: var(--cyan); color: var(--navy);
+      border: none; border-radius: 8px; padding: 0.875rem;
+      font-family: var(--font-jp); font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: background 0.15s; margin-top: 1rem;
+    }
+    .btn-primary:hover { background: #1ac8e8; }
+
+    /* DASHBOARD */
+    #screen-dash { flex: 1; flex-direction: column; display: none; }
+    #screen-dash.active { display: flex; }
+    .dash-header {
+      background: rgba(18,24,50,0.98);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: relative; z-index: 1;
+    }
+    .dash-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 0.75rem; }
+    .dash-badge {
+      background: var(--cyan); color: var(--navy);
+      font-size: 0.6rem; padding: 0.2rem 0.5rem;
+      border-radius: 4px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .dash-actions { display: flex; gap: 0.75rem; }
+    .btn-outline {
+      background: transparent; border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px; padding: 0.45rem 0.875rem;
+      color: var(--gray-400); font-family: var(--font-jp);
+      font-size: 0.78rem; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--gray-400); color: white; }
+    .btn-red { border-color: rgba(239,68,68,0.35); color: #fca5a5; }
+    .btn-red:hover { border-color: var(--danger); background: rgba(239,68,68,0.1); color: var(--danger); }
+    .dash-body { flex: 1; padding: 2rem; overflow-x: auto; position: relative; z-index: 1; }
+    .dash-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card {
+      background: rgba(36,48,85,0.6);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 1.25rem;
+    }
+    .stat-label { font-size: 0.68rem; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+    .stat-val { font-family: var(--font-mono); font-size: 1.8rem; font-weight: 500; color: var(--cyan); }
+    .table-wrap {
+      background: rgba(36,48,85,0.4);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: rgba(0,0,0,0.35); padding: 0.875rem 1rem;
+      text-align: left; font-size: 0.68rem; color: var(--gray-400);
+      text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; white-space: nowrap;
+    }
+    tbody td {
+      padding: 0.875rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.875rem; white-space: nowrap;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: rgba(255,255,255,0.025); }
+    .mono { font-family: var(--font-mono); font-weight: 500; }
+    .score-total { color: var(--cyan); font-weight: 700; }
+    .tab-badge {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      font-size: 0.72rem; color: #fca5a5;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 4px; padding: 0.1rem 0.4rem;
+    }
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--gray-600); }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PASSWORD -->
+<div id="screen-pw">
+  <div class="pw-card">
+    <div class="pw-icon">🔒</div>
+    <div class="pw-title">管理者認証</div>
+    <div class="pw-sub">パスワードを入力してください</div>
+    <div>
+      <label for="inp-pw">パスワード</label>
+      <input type="password" id="inp-pw" placeholder="••••••••"
+        onkeydown="if(event.key==='Enter')checkPw()">
+      <div class="pw-error" id="pw-error">パスワードが正しくありません</div>
+    </div>
+    <button class="btn-primary" onclick="checkPw()">ログイン</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="screen-dash">
+  <div class="dash-header">
+    <div class="dash-title">
+      採用テスト管理 <span class="dash-badge">Admin</span>
+    </div>
+    <div class="dash-actions">
+      <button class="btn-outline" onclick="exportCSV()">CSVエクスポート</button>
+      <button class="btn-outline btn-red" onclick="clearData()">データ削除</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="dash-stats" id="dash-stats"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>氏名</th><th>メール</th><th>受験日時</th>
+            <th>言語</th><th>数理</th><th>図形</th><th>論理</th>
+            <th>合計</th><th>タブ切替</th>
+          </tr>
+        </thead>
+        <tbody id="dash-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATS = ['言語','数理','図形','論理'];
+const SB_URL = 'https://swctifktqmrdvbinybgk.supabase.co';
+const SB_KEY = 'sb_publishable_kOoqHI0ni3sjD_WKi6HfcQ_F1HntHq4';
+const SB_HEADERS = {
+  'apikey': SB_KEY,
+  'Authorization': 'Bearer ' + SB_KEY,
+};
+
+function checkPw() {
+  const pw = document.getElementById('inp-pw').value;
+  if (pw === 'anomaly2024') {
+    document.getElementById('screen-pw').style.display = 'none';
+    document.getElementById('screen-dash').classList.add('active');
+    renderDash();
+  } else {
+    document.getElementById('pw-error').style.display = 'block';
+  }
+}
+
+async function loadResults() {
+  try {
+    const res = await fetch(SB_URL + '/rest/v1/recruitment_results?order=created_at.desc', { headers: SB_HEADERS });
+    return await res.json();
+  } catch { return []; }
+}
+
+async function renderDash() {
+  const results = await loadResults();
+  const avg = results.length ? (results.reduce((a,r) => a + r.total, 0) / results.length).toFixed(1) : '—';
+  const max = results.length ? Math.max(...results.map(r => r.total)) : '—';
+  const min = results.length ? Math.min(...results.map(r => r.total)) : '—';
+
+  document.getElementById('dash-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">受験者数</div><div class="stat-val">${results.length}</div></div>
+    <div class="stat-card"><div class="stat-label">平均スコア</div><div class="stat-val">${avg}</div></div>
+    <div class="stat-card"><div class="stat-label">最高スコア</div><div class="stat-val">${max}</div></div>
+    <div class="stat-card"><div class="stat-label">最低スコア</div><div class="stat-val">${min}</div></div>`;
+
+  const tbody = document.getElementById('dash-tbody');
+  if (!results.length) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📋</div><div>まだ受験データがありません</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = results.map(r => `
+    <tr>
+      <td>${r.name}</td>
+      <td style="color:var(--gray-400)">${r.email}</td>
+      <td style="color:var(--gray-600);font-family:var(--font-mono);font-size:0.78rem">${r.date}</td>
+      <td class="mono" style="color:#a5b4fc">${r.scores['言語']}/5</td>
+      <td class="mono" style="color:#fcd34d">${r.scores['数理']}/5</td>
+      <td class="mono" style="color:#6ee7b7">${r.scores['図形']}/5</td>
+      <td class="mono" style="color:#fca5a5">${r.scores['論理']}/5</td>
+      <td class="mono score-total">${r.total}/20</td>
+      <td>${r.tabSwitches > 0 ? `<span class="tab-badge">⚠ ${r.tabSwitches}回</span>` : `<span style="color:var(--gray-600)">なし</span>`}</td>
+    </tr>`).join('');
+}
+
+async function clearData() {
+  if (confirm('すべてのデータを削除しますか？この操作は取り消せません。')) {
+    await fetch(SB_URL + '/rest/v1/recruitment_results?id=neq.00000000-0000-0000-0000-000000000000', {
+      method: 'DELETE',
+      headers: SB_HEADERS,
+    });
+    renderDash();
+  }
+}
+
+async function exportCSV() {
+  const results = await loadResults();
+  if (!results.length) { alert('データがありません'); return; }
+  const header = ['氏名','メール','受験日時','言語','数理','図形','論理','合計','タブ切替回数'];
+  const rows = results.map(r => [r.name, r.email, r.date, r.scores['言語'], r.scores['数理'], r.scores['図形'], r.scores['論理'], r.total, r.tabSwitches]);
+  const csv = [header, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '採用テスト結果_' + new Date().toLocaleDateString('ja-JP').replace(/\//g,'') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
