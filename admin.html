@@ -237,7 +237,7 @@
           <tr>
             <th>氏名</th><th>メール</th><th>受験日時</th>
             <th>言語</th><th>数理</th><th>図形</th><th>論理</th>
-            <th>合計</th><th>タブ切替</th><th>詳細</th>
+            <th>合計</th><th>タブ切替</th><th>詳細</th><th>削除</th>
           </tr>
         </thead>
         <tbody id="dash-tbody"></tbody>
@@ -313,6 +313,7 @@ async function renderDash() {
       <td class="mono score-total">${r.total}/20</td>
       <td>${r.tab_switches > 0 ? `<span class="tab-badge">⚠ ${r.tab_switches}回</span>` : `<span style="color:var(--gray-600)">なし</span>`}</td>
       <td><button class="btn-detail" onclick="showDetail(${idx})">詳細</button></td>
+      <td><button class="btn-detail" style="border-color:rgba(239,68,68,0.3);color:#fca5a5" onclick="deleteOne('${r.id}', '${r.name}')">削除</button></td>
     </tr>`).join('');
   window._results = results;
 }
@@ -354,6 +355,15 @@ function showDetail(idx) {
     }).join('');
   }
   document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+async function deleteOne(id, name) {
+  if (!confirm(`「${name}」のデータを削除しますか？`)) return;
+  await fetch(SB_URL + '/rest/v1/recruitment_results?id=eq.' + id, {
+    method: 'DELETE',
+    headers: SB_HEADERS,
+  });
+  renderDash();
 }
 
 function closeModal(e) {
