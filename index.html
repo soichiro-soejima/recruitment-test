@@ -662,10 +662,21 @@ function finishTest() {
   CATS.forEach(c => scores[c] = 0);
   QS.forEach((q, i) => { if (S.answers[i] === q.ans) scores[q.cat]++; });
   const total = Object.values(scores).reduce((a, b) => a + b, 0);
+  const answersDetail = QS.map((q, i) => ({
+    qNum: i + 1,
+    cat: q.cat,
+    text: q.text,
+    correct: q.ans,
+    answered: S.answers[i],
+    isCorrect: S.answers[i] === q.ans,
+    correctText: q.opts[q.ans],
+    answeredText: S.answers[i] !== null ? q.opts[S.answers[i]] : '未回答',
+  }));
   const result = {
     name: S.name, email: S.email,
     date: new Date().toLocaleString('ja-JP'),
     scores, total, tabSwitches: S.tabSwitches,
+    answers: answersDetail,
   };
   saveResult(result);
   showResults(scores, total);
@@ -753,6 +764,7 @@ async function saveResult(r) {
         score_logic: r.scores['論理'],
         total: r.total,
         tab_switches: r.tabSwitches,
+        answers: r.answers,
       }),
     });
   } catch (e) {
