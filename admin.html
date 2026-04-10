@@ -334,13 +334,24 @@ function showDetail(idx) {
     document.getElementById('modal-body').innerHTML = '<div style="color:var(--gray-600);padding:1rem">詳細データがありません（古いデータ）</div>';
   } else {
     document.getElementById('modal-body').innerHTML = answers.map(a => {
+      if (a.type === 'text') {
+        return `
+          <div class="answer-row">
+            <div class="answer-num unanswered" style="font-size:0.65rem;width:32px;height:32px">記述</div>
+            <div class="answer-content">
+              <div class="answer-cat">Q${a.qNum}</div>
+              <div class="answer-text">${a.text.replace(/\n/g,'<br>')}</div>
+              <div class="answer-detail" style="display:block;background:rgba(255,255,255,0.04);border-radius:6px;padding:0.75rem;margin-top:0.5rem;white-space:pre-wrap;line-height:1.7;color:var(--gray-200)">${a.answeredText}</div>
+            </div>
+          </div>`;
+      }
       const cls = a.isCorrect ? 'correct' : (a.answered === null ? 'unanswered' : 'wrong');
       const icon = a.isCorrect ? '○' : (a.answered === null ? '－' : '✕');
       return `
         <div class="answer-row">
           <div class="answer-num ${cls}">${icon}</div>
           <div class="answer-content">
-            <div class="answer-cat">${a.cat} — Q${a.qNum}</div>
+            <div class="answer-cat">Q${a.qNum}</div>
             <div class="answer-text">${a.text.replace(/\n/g,'<br>')}</div>
             <div class="answer-detail">
               <span class="ans-correct">正解：${a.correctText}</span>

@@ -203,6 +203,22 @@
     }
     .btn-next:hover { background: #1ac8e8; }
     .btn-next:disabled { background: var(--gray-600); cursor: not-allowed; }
+    .free-text-area {
+      width: 100%; min-height: 160px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      color: var(--white);
+      font-family: var(--font-jp);
+      font-size: 0.95rem; line-height: 1.8;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+    .free-text-area:focus { outline: none; border-color: var(--cyan); }
+    .free-text-area:disabled { opacity: 0.45; }
+    .free-text-label { font-size: 0.72rem; color: var(--gray-400); margin-bottom: 0.5rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .timeout-overlay {
       position: absolute; inset: 0;
       background: rgba(239,68,68,0.08);
@@ -489,9 +505,9 @@ const QS = [
   { cat:'行動特性', text:'「来月の新規リードを今月より30%増やしてほしい」と言われた。まず何をする？', opts:['「このペースで続ければ自然に増えるはず」と楽観視して現状維持を続ける','30%増やすために何が必要かを考え、打ち手の候補を洗い出してから動く','上司に「何をすればいいですか？」と聞く','30%は難しいと判断し、上司に「目標を現実的な数字に修正してほしい」と伝える'], ans:1 },
   { cat:'行動特性', text:'担当しているクライアントの広告成果が先月より悪化した。月次報告の場でどう説明する？', opts:['「業界全体が落ちているので仕方ありません」と説明する','「自分のリソースが足りなくて対応できませんでした」と説明する','原因を分析した上で「○○が原因と考えられます。今月は○○の施策で改善します」と説明する','数字には触れず、来月の施策だけを説明する'], ans:2 },
   { cat:'行動特性', text:'同時に3つのタスクを抱えている。①クライアントA社の急ぎのレポート（今日中）、②来週締切の提案書、③社内の定例会議の資料（明後日）。どの順で取り組む？', opts:['来週締切の提案書から着手する（時間がかかるから）','定例会議の資料から着手する（みんなに関わるから）','今日中のレポートを最優先に着手し、残りは締切順に対応する','上司に全部報告して、順番を決めてもらう'], ans:2 },
-  // 文章力
-  { cat:'文章力', text:'クライアントに「先月の広告費が予算を10万円オーバーしたこと」を報告するメール。書き出しとして最も適切なものはどれ？', opts:['「いつもお世話になっております。先月は様々な施策に取り組みまして、その中でいくつか課題もございましたが、全体的には一定の成果が出ており…」','「先月の広告費が予算を10万円超過しました。原因と対応策をご報告します。」','「ご確認いただきたい件がございます。先月の広告運用についてなのですが、少し状況をご説明させていただければと思い…」','「お世話になっております。先月分の広告レポートを添付します。ご確認ください。」'], ans:1 },
-  { cat:'文章力', text:'上司から「A社の状況を一言で教えて」と言われた。最も適切な返答はどれ？', opts:['「A社はですね、先月から色々あって、CPAが上がってきていて、クリエイティブも変えたんですが、なかなか改善しなくて、予算も…」','「成果が悪化しています。CPAが先月比30%増で、原因はクリエイティブの疲弊と見ています。」','「特に問題はないと思います。数字を後で送ります。」','「少し課題があります。詳しくはレポートを見てもらえますか？」'], ans:1 },
+  // 文章力（自由記述）
+  { cat:'文章力', type:'text', text:'上司に相談する時に、気を付けているポイントを3つ教えてください。' },
+  { cat:'文章力', type:'text', text:'以下のメールの件名の良くない点を指摘してください。\n\n件名：議事録送付 ○○様' },
 ];
 
 // ===== STATE =====
@@ -571,6 +587,8 @@ function drawTimer() {
 function onTimeout() {
   S.timedOut = true;
   document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+  const ta = document.getElementById('free-text-ans');
+  if (ta) ta.disabled = true;
   const card = document.getElementById('q-card');
   if (!card.querySelector('.timeout-overlay')) {
     const ov = document.createElement('div');
@@ -597,13 +615,22 @@ function renderQ() {
 
   const grid = document.getElementById('opts');
   grid.innerHTML = '';
-  q.opts.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.innerHTML = `<span class="opt-label">${LABELS[i]}</span><span>${opt}</span>`;
-    btn.onclick = () => selectOpt(i);
-    grid.appendChild(btn);
-  });
+  if (q.type === 'text') {
+    grid.innerHTML = `
+      <div class="free-text-label">自由記述</div>
+      <textarea id="free-text-ans" class="free-text-area" placeholder="こちらに回答を入力してください"></textarea>`;
+    document.getElementById('free-text-ans').addEventListener('input', e => {
+      document.getElementById('btn-next').disabled = e.target.value.trim() === '';
+    });
+  } else {
+    q.opts.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="opt-label">${LABELS[i]}</span><span>${opt}</span>`;
+      btn.onclick = () => selectOpt(i);
+      grid.appendChild(btn);
+    });
+  }
 
   const nextBtn = document.getElementById('btn-next');
   nextBtn.textContent = S.qIdx < 6 ? '次の問題 →' : '結果を見る';
@@ -626,7 +653,13 @@ function selectOpt(i) {
 // ===== NAVIGATION =====
 function nextQ() {
   stopTimer();
-  S.answers[S.qIdx] = S.selected;
+  const q = QS[S.qIdx];
+  if (q.type === 'text') {
+    const ta = document.getElementById('free-text-ans');
+    S.answers[S.qIdx] = ta ? ta.value.trim() : '';
+  } else {
+    S.answers[S.qIdx] = S.selected;
+  }
   if (S.qIdx >= 6) { finishTest(); return; }
   S.qIdx++;
   renderQ();
@@ -636,18 +669,20 @@ function nextQ() {
 function finishTest() {
   const scores = {};
   CATS.forEach(c => scores[c] = 0);
-  QS.forEach((q, i) => { if (S.answers[i] === q.ans) scores[q.cat]++; });
-  const total = Object.values(scores).reduce((a, b) => a + b, 0);
-  const answersDetail = QS.map((q, i) => ({
-    qNum: i + 1,
-    cat: q.cat,
-    text: q.text,
-    correct: q.ans,
-    answered: S.answers[i],
-    isCorrect: S.answers[i] === q.ans,
-    correctText: q.opts[q.ans],
-    answeredText: S.answers[i] !== null ? q.opts[S.answers[i]] : '未回答',
-  }));
+  QS.forEach((q, i) => { if (q.type !== 'text' && S.answers[i] === q.ans) scores[q.cat]++; });
+  const total = scores['行動特性']; // 自由記述は採点対象外
+  const answersDetail = QS.map((q, i) => {
+    if (q.type === 'text') {
+      return { qNum: i + 1, cat: q.cat, text: q.text, type: 'text', answeredText: S.answers[i] || '未回答' };
+    }
+    return {
+      qNum: i + 1, cat: q.cat, text: q.text,
+      correct: q.ans, answered: S.answers[i],
+      isCorrect: S.answers[i] === q.ans,
+      correctText: q.opts[q.ans],
+      answeredText: S.answers[i] !== null ? q.opts[S.answers[i]] : '未回答',
+    };
+  });
   const result = {
     name: S.name, email: S.email,
     date: new Date().toLocaleString('ja-JP'),
@@ -664,19 +699,21 @@ function showResults(scores, total) {
   document.getElementById('res-name').textContent = S.name + ' さんの結果';
   const cont = document.getElementById('cat-scores');
   cont.innerHTML = '';
-  const catMax = { '行動特性': 5, '文章力': 2 };
-  CATS.forEach(cat => {
-    const s = scores[cat];
-    const max = catMax[cat];
-    const pct = s / max * 100;
-    const row = document.createElement('div');
-    row.className = 'cat-score-row';
-    row.innerHTML = `
-      <span class="cat-score-name" style="width:80px">${cat}</span>
-      <div class="cat-bar-wrap"><div class="cat-bar bar-${cat}" style="width:0%" data-p="${pct}"></div></div>
-      <span class="cat-score-val mono">${s} / ${max}</span>`;
-    cont.appendChild(row);
-  });
+  // 行動特性のみスコア表示、文章力は自由記述のため採点なし
+  const mcRow = document.createElement('div');
+  mcRow.className = 'cat-score-row';
+  const pct = scores['行動特性'] / 5 * 100;
+  mcRow.innerHTML = `
+    <span class="cat-score-name" style="width:80px">行動特性</span>
+    <div class="cat-bar-wrap"><div class="cat-bar bar-行動特性" style="width:0%" data-p="${pct}"></div></div>
+    <span class="cat-score-val mono">${scores['行動特性']} / 5</span>`;
+  cont.appendChild(mcRow);
+  const textRow = document.createElement('div');
+  textRow.className = 'cat-score-row';
+  textRow.innerHTML = `
+    <span class="cat-score-name" style="width:80px">文章力</span>
+    <div style="flex:1;font-size:0.75rem;color:var(--gray-600)">自由記述（採点なし）</div>`;
+  cont.appendChild(textRow);
   showScreen('results');
   setTimeout(() => {
     document.querySelectorAll('.cat-bar').forEach(b => { b.style.width = b.dataset.p + '%'; });
@@ -796,6 +833,7 @@ document.addEventListener('visibilitychange', () => {
 // ===== KEYBOARD =====
 document.addEventListener('keydown', e => {
   if (S.screen !== 'test' || S.timedOut) return;
+  if (QS[S.qIdx].type === 'text') return; // 自由記述中はショートカット無効
   const map = { '1':0, '2':1, '3':2, '4':3, 'a':0, 'b':1, 'c':2, 'd':3 };
   if (map[e.key] !== undefined) selectOpt(map[e.key]);
   if (e.key === 'Enter') nextQ();
