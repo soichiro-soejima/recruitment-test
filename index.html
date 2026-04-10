@@ -137,10 +137,8 @@
       border-radius: 20px;
       font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
     }
-    .cat-言語 { background: rgba(99,102,241,0.18); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
-    .cat-数理 { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
-    .cat-図形 { background: rgba(16,185,129,0.18); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-    .cat-論理 { background: rgba(239,68,68,0.18); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+    .cat-行動特性 { background: rgba(0,180,216,0.18); color: #00b4d8; border: 1px solid rgba(0,180,216,0.3); }
+    .cat-文章力 { background: rgba(99,102,241,0.18); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
     .progress-count { font-family: var(--font-mono); font-size: 0.72rem; color: var(--gray-400); }
     .progress-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
     .progress-fill { height: 100%; background: var(--cyan); border-radius: 2px; transition: width 0.4s ease; }
@@ -261,10 +259,8 @@
     .cat-score-name { width: 50px; font-size: 0.875rem; color: var(--gray-400); font-weight: 500; }
     .cat-bar-wrap { flex: 1; height: 8px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; }
     .cat-bar { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
-    .bar-言語 { background: #a5b4fc; }
-    .bar-数理 { background: #fcd34d; }
-    .bar-図形 { background: #6ee7b7; }
-    .bar-論理 { background: #fca5a5; }
+    .bar-行動特性 { background: #00b4d8; }
+    .bar-文章力 { background: #a5b4fc; }
     .cat-score-val { font-family: var(--font-mono); font-size: 0.875rem; width: 40px; text-align: right; }
     .results-footer { margin-top: 1.5rem; text-align: center; color: var(--gray-600); font-size: 0.78rem; line-height: 1.7; }
 
@@ -365,19 +361,15 @@
       <div class="test-info-grid">
         <div>
           <span class="test-info-label">問題数</span>
-          <span class="test-info-value">20問</span>
+          <span class="test-info-value">7問</span>
         </div>
         <div>
           <span class="test-info-label">制限時間</span>
-          <span class="test-info-value">各1分</span>
-        </div>
-        <div>
-          <span class="test-info-label">カテゴリ</span>
-          <span class="test-info-value">4種類</span>
+          <span class="test-info-value">各2分</span>
         </div>
         <div>
           <span class="test-info-label">合計</span>
-          <span class="test-info-value">最大20分</span>
+          <span class="test-info-value">最大14分</span>
         </div>
       </div>
     </div>
@@ -416,7 +408,7 @@
   <div class="test-header">
     <div class="test-progress-container">
       <div class="test-progress-info">
-        <span id="cat-badge" class="category-badge cat-言語">言語</span>
+        <span id="cat-badge" class="category-badge cat-行動特性" style="display:none"></span>
         <span class="progress-count" id="prog-count">1 / 20</span>
       </div>
       <div class="progress-bar">
@@ -452,7 +444,7 @@
     </div>
     <div class="total-score-box">
       <div class="total-label">総合スコア</div>
-      <div class="total-value"><span id="res-total">0</span><span class="total-denom"> / 20</span></div>
+      <div class="total-value"><span id="res-total">0</span><span class="total-denom"> / 7</span></div>
     </div>
     <div class="cat-scores" id="cat-scores"></div>
     <div class="results-footer">
@@ -491,30 +483,15 @@
 <script>
 // ===== QUESTIONS =====
 const QS = [
-  // 言語
-  { cat:'言語', text:'「迅速」の対義語は？', opts:['緩慢','敏速','鋭敏','俊敏'], ans:0 },
-  { cat:'言語', text:'次の文の（　）に入る最も適切な言葉は？\n「彼の発言は（　）に富んでいて、聴衆を引き込んだ」', opts:['機知','機嫌','機会','機能'], ans:0 },
-  { cat:'言語', text:'「付和雷同」の意味として正しいのは？', opts:['自分の意見を持たず他人に同調する','雷のように素早く行動する','和を以て貴しとなす','協力して困難を乗り越える'], ans:0 },
-  { cat:'言語', text:'「彼はプロジェクトの（　）を握る重要人物だ」に入る言葉は？', opts:['鍵','扉','窓','壁'], ans:0 },
-  { cat:'言語', text:'次のうち、敬語の使い方が正しい文は？', opts:['部長が申された','お客様がいらっしゃいます','先生がおっしゃられた','社長がおられた'], ans:1 },
-  // 数理
-  { cat:'数理', text:'時速60kmで走る車が2時間30分で進む距離は？', opts:['120km','150km','180km','200km'], ans:1 },
-  { cat:'数理', text:'ある商品を定価の20%引きで買ったら4,800円だった。定価はいくら？', opts:['5,760円','6,000円','5,500円','6,400円'], ans:1 },
-  { cat:'数理', text:'3人が同じ仕事をするのに6日かかる。6人なら何日かかる？', opts:['2日','3日','4日','5日'], ans:1 },
-  { cat:'数理', text:'1から100までの整数の和は？', opts:['4,950','5,000','5,050','5,100'], ans:2 },
-  { cat:'数理', text:'ある数の30%は90である。その数は？', opts:['270','300','330','360'], ans:1 },
-  // 図形
-  { cat:'図形', text:'正方形の面積が64cm²のとき、周の長さは？', opts:['24cm','28cm','32cm','36cm'], ans:2 },
-  { cat:'図形', text:'半径5cmの円の面積は？（π＝3.14）', opts:['62.8cm²','78.5cm²','94.2cm²','31.4cm²'], ans:1 },
-  { cat:'図形', text:'縦4cm・横6cm・高さ3cmの直方体の体積は？', opts:['60cm³','72cm³','84cm³','48cm³'], ans:1 },
-  { cat:'図形', text:'三角形の内角の和は？', opts:['90°','180°','270°','360°'], ans:1 },
-  { cat:'図形', text:'正六角形の1つの内角は何度？', opts:['108°','120°','135°','150°'], ans:1 },
-  // 論理
-  { cat:'論理', text:'「すべての犬は動物である」「ポチは犬である」が正しいとき、確実に言えることは？', opts:['ポチは動物である','すべての動物は犬である','ポチ以外に犬はいない','動物はすべてポチである'], ans:0 },
-  { cat:'論理', text:'A・B・C・Dの4人が1列に並ぶ。AはBの隣、CはDの隣に並べない。何通りの並び方がある？', opts:['8通り','10通り','12通り','14通り'], ans:0 },
-  { cat:'論理', text:'ある規則で並んだ数列：2, 4, 8, 16, （　）', opts:['24','28','32','36'], ans:2 },
-  { cat:'論理', text:'「雨が降れば試合は中止」「試合は中止だった」のとき確実に言えることは？', opts:['雨が降った','雨は降っていない','試合が開催された','雨以外の理由かもしれない'], ans:3 },
-  { cat:'論理', text:'赤・青・黄の3色で2×2の4マスを塗る。隣り合うマスは同色不可。何通り？', opts:['18通り','24通り','30通り','36通り'], ans:0 },
+  // 行動特性
+  { cat:'行動特性', text:'上司から「A社向けの提案書を木曜17時までに、○○のフォーマットで送ってください」と指示された。作業中に「このフォーマットより自分が知っている別の形式の方が見やすい」と気づいた。どうする？', opts:['自分が見やすいと思う形式で作成して送る','指定フォーマットで作成し、送付後に「別の形式も良いかもしれません」と提案する','両方作って、どちらか選んでもらう','上司に確認せず、途中で形式を変えて作業を進める'], ans:1 },
+  { cat:'行動特性', text:'締切が今日17時のタスクが、14時時点でまだ半分しか終わっていない。このまま進めても間に合わない可能性が高い。どうする？', opts:['全力でやって、遅れたとしても仕方ないと割り切る','17時に「作業中です。もう少し時間をください」と連絡する','すぐに上司に状況を報告し、優先順位や対応方法を相談する','残業すれば間に合うかもしれないので、黙って作業を続ける'], ans:2 },
+  { cat:'行動特性', text:'「来月の新規リードを今月より30%増やしてほしい」と言われた。まず何をする？', opts:['すぐに広告の入札額を上げる','30%増やすために何が必要かを考え、打ち手の候補を洗い出してから動く','上司に「何をすればいいですか？」と聞く','競合他社の広告を調べる'], ans:1 },
+  { cat:'行動特性', text:'担当しているクライアントの広告成果が先月より悪化した。月次報告の場でどう説明する？', opts:['「業界全体が落ちているので仕方ありません」と説明する','「自分のリソースが足りなくて対応できませんでした」と説明する','原因を分析した上で「○○が原因と考えられます。今月は○○の施策で改善します」と説明する','数字には触れず、来月の施策だけを説明する'], ans:2 },
+  { cat:'行動特性', text:'同時に3つのタスクを抱えている。①クライアントA社の急ぎのレポート（今日中）、②来週締切の提案書、③社内の定例会議の資料（明後日）。どの順で取り組む？', opts:['来週締切の提案書から着手する（時間がかかるから）','定例会議の資料から着手する（みんなに関わるから）','今日中のレポートを最優先に着手し、残りは締切順に対応する','上司に全部報告して、順番を決めてもらう'], ans:2 },
+  // 文章力
+  { cat:'文章力', text:'クライアントに「先月の広告費が予算を10万円オーバーしたこと」を報告するメール。書き出しとして最も適切なものはどれ？', opts:['「いつもお世話になっております。先月は様々な施策に取り組みまして、その中でいくつか課題もございましたが、全体的には一定の成果が出ており…」','「先月の広告費が予算を10万円超過しました。原因と対応策をご報告します。」','「ご確認いただきたい件がございます。先月の広告運用についてなのですが、少し状況をご説明させていただければと思い…」','「お世話になっております。先月分の広告レポートを添付します。ご確認ください。」'], ans:1 },
+  { cat:'文章力', text:'上司から「A社の状況を一言で教えて」と言われた。最も適切な返答はどれ？', opts:['「A社はですね、先月から色々あって、CPAが上がってきていて、クリエイティブも変えたんですが、なかなか改善しなくて、予算も…」','「成果が悪化しています。CPAが先月比30%増で、原因はクリエイティブの疲弊と見ています。」','「特に問題はないと思います。数字を後で送ります。」','「少し課題があります。詳しくはレポートを見てもらえますか？」'], ans:1 },
 ];
 
 // ===== STATE =====
@@ -531,7 +508,7 @@ const S = {
 };
 const CIRC = 263.9;
 const LABELS = ['A','B','C','D'];
-const CATS = ['言語','数理','図形','論理'];
+const CATS = ['行動特性','文章力'];
 
 // ===== SUPABASE =====
 const SB_URL = 'https://swctifktqmrdvbinybgk.supabase.co';
@@ -556,7 +533,7 @@ function startTest() {
   if (!name || !email) { alert('お名前とメールアドレスを入力してください'); return; }
   if (!email.includes('@')) { alert('有効なメールアドレスを入力してください'); return; }
   S.name = name; S.email = email;
-  S.qIdx = 0; S.answers = new Array(20).fill(null);
+  S.qIdx = 0; S.answers = new Array(7).fill(null);
   S.tabSwitches = 0; S.selected = null;
   showScreen('test');
   renderQ();
@@ -566,7 +543,7 @@ function startTest() {
 // ===== TIMER =====
 function startTimer() {
   stopTimer();
-  S.timeLeft = 60; S.timedOut = false;
+  S.timeLeft = 120; S.timedOut = false;
   drawTimer();
   S.timerID = setInterval(tick, 1000);
 }
@@ -583,9 +560,9 @@ function drawTimer() {
   const ring = document.getElementById('timer-ring');
   const num = document.getElementById('timer-num');
   if (!ring) return;
-  ring.style.strokeDashoffset = CIRC * (1 - t / 60);
+  ring.style.strokeDashoffset = CIRC * (1 - t / 120);
   num.textContent = t;
-  const cls = t <= 10 ? 'danger' : t <= 20 ? 'warn' : '';
+  const cls = t <= 20 ? 'danger' : t <= 40 ? 'warn' : '';
   ring.className = 'timer-ring' + (cls ? ' ' + cls : '');
   num.className = 'timer-num' + (cls ? ' ' + cls : '');
 }
@@ -615,8 +592,8 @@ function renderQ() {
   const badge = document.getElementById('cat-badge');
   badge.textContent = q.cat;
   badge.className = 'category-badge cat-' + q.cat;
-  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 20';
-  document.getElementById('prog-fill').style.width = (S.qIdx / 20 * 100) + '%';
+  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 7';
+  document.getElementById('prog-fill').style.width = (S.qIdx / 7 * 100) + '%';
   document.getElementById('q-meta').textContent = '問題 ' + (S.qIdx + 1) + ' — ' + q.cat;
   document.getElementById('q-text').innerHTML = q.text.replace(/\n/g, '<br>');
 
@@ -631,7 +608,7 @@ function renderQ() {
   });
 
   const nextBtn = document.getElementById('btn-next');
-  nextBtn.textContent = S.qIdx < 19 ? '次の問題 →' : '結果を見る';
+  nextBtn.textContent = S.qIdx < 6 ? '次の問題 →' : '結果を見る';
   nextBtn.disabled = false;
 
   card.classList.remove('fade-in');
@@ -651,7 +628,7 @@ function selectOpt(i) {
 function nextQ() {
   stopTimer();
   S.answers[S.qIdx] = S.selected;
-  if (S.qIdx >= 19) { finishTest(); return; }
+  if (S.qIdx >= 6) { finishTest(); return; }
   S.qIdx++;
   renderQ();
   startTimer();
@@ -688,15 +665,17 @@ function showResults(scores, total) {
   document.getElementById('res-name').textContent = S.name + ' さんの結果';
   const cont = document.getElementById('cat-scores');
   cont.innerHTML = '';
+  const catMax = { '行動特性': 5, '文章力': 2 };
   CATS.forEach(cat => {
     const s = scores[cat];
-    const pct = s / 5 * 100;
+    const max = catMax[cat];
+    const pct = s / max * 100;
     const row = document.createElement('div');
     row.className = 'cat-score-row';
     row.innerHTML = `
-      <span class="cat-score-name">${cat}</span>
+      <span class="cat-score-name" style="width:80px">${cat}</span>
       <div class="cat-bar-wrap"><div class="cat-bar bar-${cat}" style="width:0%" data-p="${pct}"></div></div>
-      <span class="cat-score-val mono">${s} / 5</span>`;
+      <span class="cat-score-val mono">${s} / ${max}</span>`;
     cont.appendChild(row);
   });
   showScreen('results');
@@ -758,10 +737,10 @@ async function saveResult(r) {
         name: r.name,
         email: r.email,
         date: r.date,
-        score_language: r.scores['言語'],
-        score_math: r.scores['数理'],
-        score_geometry: r.scores['図形'],
-        score_logic: r.scores['論理'],
+        score_language: r.scores['行動特性'],
+        score_math: r.scores['文章力'],
+        score_geometry: 0,
+        score_logic: 0,
         total: r.total,
         tab_switches: r.tabSwitches,
         answers: r.answers,
