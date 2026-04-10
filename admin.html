@@ -236,7 +236,7 @@
         <thead>
           <tr>
             <th>氏名</th><th>メール</th><th>受験日時</th>
-            <th>言語</th><th>数理</th><th>図形</th><th>論理</th>
+            <th>行動特性</th><th>文章力</th>
             <th>合計</th><th>タブ切替</th><th>詳細</th><th>削除</th>
           </tr>
         </thead>
@@ -258,7 +258,7 @@
 </div>
 
 <script>
-const CATS = ['言語','数理','図形','論理'];
+const CATS = ['行動特性','文章力'];
 const SB_URL = 'https://swctifktqmrdvbinybgk.supabase.co';
 const SB_KEY = 'sb_publishable_kOoqHI0ni3sjD_WKi6HfcQ_F1HntHq4';
 const SB_HEADERS = {
@@ -298,7 +298,7 @@ async function renderDash() {
 
   const tbody = document.getElementById('dash-tbody');
   if (!results.length) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">📋</div><div>まだ受験データがありません</div></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><div>まだ受験データがありません</div></div></td></tr>`;
     return;
   }
   tbody.innerHTML = results.map((r, idx) => `
@@ -307,10 +307,8 @@ async function renderDash() {
       <td style="color:var(--gray-400)">${r.email}</td>
       <td style="color:var(--gray-600);font-family:var(--font-mono);font-size:0.78rem">${r.date}</td>
       <td class="mono" style="color:#a5b4fc">${r.score_language}/5</td>
-      <td class="mono" style="color:#fcd34d">${r.score_math}/5</td>
-      <td class="mono" style="color:#6ee7b7">${r.score_geometry}/5</td>
-      <td class="mono" style="color:#fca5a5">${r.score_logic}/5</td>
-      <td class="mono score-total">${r.total}/20</td>
+      <td class="mono" style="color:#fcd34d">${r.score_math}/2</td>
+      <td class="mono score-total">${r.total}/7</td>
       <td>${r.tab_switches > 0 ? `<span class="tab-badge">⚠ ${r.tab_switches}回</span>` : `<span style="color:var(--gray-600)">なし</span>`}</td>
       <td><button class="btn-detail" onclick="showDetail(${idx})">詳細</button></td>
       <td><button class="btn-detail" style="border-color:rgba(239,68,68,0.3);color:#fca5a5" onclick="deleteOne('${r.id}', '${r.name}')">削除</button></td>
@@ -375,8 +373,8 @@ function closeModal(e) {
 async function exportCSV() {
   const results = await loadResults();
   if (!results.length) { alert('データがありません'); return; }
-  const header = ['氏名','メール','受験日時','言語','数理','図形','論理','合計','タブ切替回数'];
-  const rows = results.map(r => [r.name, r.email, r.date, r.scores['言語'], r.scores['数理'], r.scores['図形'], r.scores['論理'], r.total, r.tabSwitches]);
+  const header = ['氏名','メール','受験日時','行動特性','文章力','合計','タブ切替回数'];
+  const rows = results.map(r => [r.name, r.email, r.date, r.score_language, r.score_math, r.total, r.tab_switches]);
   const csv = [header, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
