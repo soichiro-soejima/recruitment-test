@@ -589,9 +589,7 @@ function renderQ() {
   const ov = card.querySelector('.timeout-overlay');
   if (ov) ov.remove();
 
-  const badge = document.getElementById('cat-badge');
-  badge.textContent = q.cat;
-  badge.className = 'category-badge cat-' + q.cat;
+  // カテゴリバッジは受験者には表示しない
   document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 7';
   document.getElementById('prog-fill').style.width = (S.qIdx / 7 * 100) + '%';
   document.getElementById('q-meta').textContent = '問題 ' + (S.qIdx + 1) + ' — ' + q.cat;
@@ -609,7 +607,7 @@ function renderQ() {
 
   const nextBtn = document.getElementById('btn-next');
   nextBtn.textContent = S.qIdx < 6 ? '次の問題 →' : '結果を見る';
-  nextBtn.disabled = false;
+  nextBtn.disabled = true; // 回答するまで進めない
 
   card.classList.remove('fade-in');
   void card.offsetWidth;
@@ -622,6 +620,7 @@ function selectOpt(i) {
   document.querySelectorAll('.option-btn').forEach((b, idx) => {
     b.classList.toggle('selected', idx === i);
   });
+  document.getElementById('btn-next').disabled = false; // 選択したら進めるようになる
 }
 
 // ===== NAVIGATION =====
