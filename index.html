@@ -369,15 +369,11 @@
   <div class="landing-card fade-in">
     <div class="logo-mark">A</div>
     <div class="landing-title">採用適性テスト</div>
-    <div class="landing-subtitle">
-      認知能力を測定するためのテストです。<br>
-      全20問、各問題に1分の制限時間があります。
-    </div>
     <div class="test-info">
       <div class="test-info-grid">
         <div>
           <span class="test-info-label">問題数</span>
-          <span class="test-info-value">7問</span>
+          <span class="test-info-value">6問</span>
         </div>
         <div>
           <span class="test-info-label">制限時間</span>
@@ -385,7 +381,7 @@
         </div>
         <div>
           <span class="test-info-label">合計</span>
-          <span class="test-info-value">最大14分</span>
+          <span class="test-info-value">最大12分</span>
         </div>
       </div>
     </div>
@@ -456,13 +452,8 @@
     <div class="results-header">
       <div class="results-icon">✓</div>
       <div class="results-title">テスト完了</div>
-      <div class="results-name" id="res-name"></div>
+      <div class="results-name">お疲れさまでした。</div>
     </div>
-    <div class="total-score-box">
-      <div class="total-label">総合スコア</div>
-      <div class="total-value"><span id="res-total">0</span><span class="total-denom"> / 7</span></div>
-    </div>
-    <div class="cat-scores" id="cat-scores"></div>
     <div class="results-footer">
       結果は担当者に共有されました。<br>このページを閉じていただいて構いません。
     </div>
@@ -502,8 +493,7 @@ const QS = [
   // 行動特性
   { cat:'行動特性', text:'上司から「A社向けの提案書を木曜17時までに、○○のフォーマットで送ってください」と指示された。作業中に「このフォーマットより自分が知っている別の形式の方が見やすい」と気づいた。どうする？', opts:['自分が見やすいと思う形式で作成して送る','指定フォーマットで作成し、送付後に「別の形式も良いかもしれません」と提案する','上司に別の形式の方が見やすいと提案し、どちらが良いか判断を仰ぐ','上司に確認せず、途中で形式を変えて作業を進める'], ans:2 },
   { cat:'行動特性', text:'締切が今日17時のタスクが、14時時点でまだ半分しか終わっていない。このまま進めても間に合わない可能性が高い。どうする？', opts:['全力でやって、遅れたとしても仕方ないと割り切る','17時に「作業中です。もう少し時間をください」と連絡する','すぐに上司に状況を報告し、優先順位や対応方法を相談する','残業すれば間に合うかもしれないので、黙って作業を続ける'], ans:2 },
-  { cat:'行動特性', text:'「来月の新規リードを今月より30%増やしてほしい」と言われた。まず何をする？', opts:['「このペースで続ければ自然に増えるはず」と楽観視して現状維持を続ける','30%増やすために何が必要かを考え、打ち手の候補を洗い出してから動く','上司に「何をすればいいですか？」と聞く','30%は難しいと判断し、上司に「目標を現実的な数字に修正してほしい」と伝える'], ans:1 },
-  { cat:'行動特性', text:'担当しているクライアントの広告成果が先月より悪化した。月次報告の場でどう説明する？', opts:['「業界全体が落ちているので仕方ありません」と説明する','「自分のリソースが足りなくて対応できませんでした」と説明する','原因を分析した上で「○○が原因と考えられます。今月は○○の施策で改善します」と説明する','数字には触れず、来月の施策だけを説明する'], ans:2 },
+{ cat:'行動特性', text:'担当しているクライアントの広告成果が先月より悪化した。月次報告の場でどう説明する？', opts:['「業界全体が落ちているので仕方ありません」と説明する','「自分のリソースが足りなくて対応できませんでした」と説明する','原因を分析した上で「○○が原因と考えられます。今月は○○の施策で改善します」と説明する','数字には触れず、来月の施策だけを説明する'], ans:2 },
   { cat:'行動特性', text:'同時に3つのタスクを抱えている。①クライアントA社の急ぎのレポート（今日中）、②来週締切の提案書、③社内の定例会議の資料（明後日）。どの順で取り組む？', opts:['来週締切の提案書から着手する（時間がかかるから）','定例会議の資料から着手する（みんなに関わるから）','今日中のレポートを最優先に着手し、残りは締切順に対応する','上司に全部報告して、順番を決めてもらう'], ans:2 },
   // 文章力（自由記述）
   { cat:'文章力', type:'text', text:'上司に相談する時に、気を付けているポイントを3つ教えてください。' },
@@ -608,8 +598,8 @@ function renderQ() {
   if (ov) ov.remove();
 
   // カテゴリバッジは受験者には表示しない
-  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 7';
-  document.getElementById('prog-fill').style.width = (S.qIdx / 7 * 100) + '%';
+  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 6';
+  document.getElementById('prog-fill').style.width = (S.qIdx / 6 * 100) + '%';
   document.getElementById('q-meta').textContent = '問題 ' + (S.qIdx + 1);
   document.getElementById('q-text').innerHTML = q.text.replace(/\n/g, '<br>');
 
@@ -633,7 +623,7 @@ function renderQ() {
   }
 
   const nextBtn = document.getElementById('btn-next');
-  nextBtn.textContent = S.qIdx < 6 ? '次の問題 →' : '結果を見る';
+  nextBtn.textContent = S.qIdx < 5 ? '次の問題 →' : '結果を見る';
   nextBtn.disabled = true; // 回答するまで進めない
 
   card.classList.remove('fade-in');
@@ -660,7 +650,7 @@ function nextQ() {
   } else {
     S.answers[S.qIdx] = S.selected;
   }
-  if (S.qIdx >= 6) { finishTest(); return; }
+  if (S.qIdx >= 5) { finishTest(); return; }
   S.qIdx++;
   renderQ();
   startTimer();
@@ -695,29 +685,7 @@ function finishTest() {
 
 // ===== RESULTS =====
 function showResults(scores, total) {
-  document.getElementById('res-total').textContent = total;
-  document.getElementById('res-name').textContent = S.name + ' さんの結果';
-  const cont = document.getElementById('cat-scores');
-  cont.innerHTML = '';
-  // 行動特性のみスコア表示、文章力は自由記述のため採点なし
-  const mcRow = document.createElement('div');
-  mcRow.className = 'cat-score-row';
-  const pct = scores['行動特性'] / 5 * 100;
-  mcRow.innerHTML = `
-    <span class="cat-score-name" style="width:80px">行動特性</span>
-    <div class="cat-bar-wrap"><div class="cat-bar bar-行動特性" style="width:0%" data-p="${pct}"></div></div>
-    <span class="cat-score-val mono">${scores['行動特性']} / 5</span>`;
-  cont.appendChild(mcRow);
-  const textRow = document.createElement('div');
-  textRow.className = 'cat-score-row';
-  textRow.innerHTML = `
-    <span class="cat-score-name" style="width:80px">文章力</span>
-    <div style="flex:1;font-size:0.75rem;color:var(--gray-600)">自由記述（採点なし）</div>`;
-  cont.appendChild(textRow);
   showScreen('results');
-  setTimeout(() => {
-    document.querySelectorAll('.cat-bar').forEach(b => { b.style.width = b.dataset.p + '%'; });
-  }, 100);
 }
 
 // ===== DASHBOARD =====
