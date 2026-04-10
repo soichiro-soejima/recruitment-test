@@ -592,7 +592,7 @@ function renderQ() {
   // カテゴリバッジは受験者には表示しない
   document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 7';
   document.getElementById('prog-fill').style.width = (S.qIdx / 7 * 100) + '%';
-  document.getElementById('q-meta').textContent = '問題 ' + (S.qIdx + 1) + ' — ' + q.cat;
+  document.getElementById('q-meta').textContent = '問題 ' + (S.qIdx + 1);
   document.getElementById('q-text').innerHTML = q.text.replace(/\n/g, '<br>');
 
   const grid = document.getElementById('opts');
