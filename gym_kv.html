@@ -7,171 +7,157 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Noto Sans JP', sans-serif; background: #0d0d0d; overflow: hidden; }
-
-    nav {
-      position: absolute; top: 0; left: 0; right: 0; z-index: 20;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.4rem 3rem;
-    }
-    .nav-logo {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900; font-size: 1rem;
-      letter-spacing: 0.2em; color: #fff;
-    }
-    .nav-links { display: flex; gap: 2.25rem; list-style: none; }
-    .nav-links a {
-      color: rgba(255,255,255,0.65); font-size: 0.72rem;
-      text-decoration: none; letter-spacing: 0.1em;
-      font-family: 'Montserrat', sans-serif; font-weight: 400;
-    }
-    .nav-cta {
-      background: #fff; color: #111;
-      padding: 0.55rem 1.5rem; border-radius: 9999px;
-      font-size: 0.72rem; font-weight: 700;
-      text-decoration: none; letter-spacing: 0.06em;
-      font-family: 'Noto Sans JP', sans-serif;
-      white-space: nowrap;
-    }
+    body { font-family: 'Noto Sans JP', sans-serif; background: #fff; overflow: hidden; }
 
     .hero {
       position: relative;
       width: 1200px; height: 600px;
-      background: #0d0d0d;
-      display: flex; align-items: center;
+      background: #fff;
       overflow: hidden;
     }
 
-    .bg-layer {
-      position: absolute; inset: 0;
-      background: linear-gradient(120deg, #0d0d0d 0%, #141414 50%, #1a1a1a 100%);
-    }
-    .bg-grid {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-      background-size: 60px 60px;
-    }
-    .bg-glow {
+    /* ===== 斜め画像エリア（右上→左下） ===== */
+    .img-panel {
       position: absolute;
-      right: 20%; top: 50%;
-      transform: translateY(-50%);
-      width: 500px; height: 500px;
-      background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 65%);
-    }
-
-    .right-panel {
-      position: absolute; right: 0; top: 0; bottom: 0;
-      width: 420px;
-      border-left: 1px solid rgba(255,255,255,0.07);
+      top: -60px; right: -80px;
+      width: 680px; height: 780px;
+      transform: skewX(-8deg);
       overflow: hidden;
-      background: #000;
+      z-index: 1;
     }
-    .right-panel img {
-      width: 100%; height: 100%;
-      object-fit: cover; object-position: center;
-      display: block;
+    .img-panel::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 2;
+      background: linear-gradient(to right, #fff 0%, transparent 18%);
+    }
+    .img-panel img {
+      position: absolute;
+      top: 60px; left: -20px;
+      width: 760px; height: 720px;
+      object-fit: cover;
+      object-position: center top;
+      transform: skewX(8deg);
+    }
+    /* アクセントライン */
+    .accent-line {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 448px;
+      width: 4px;
+      background: linear-gradient(to bottom, #c8a84b 0%, #e8cc6a 50%, #c8a84b 100%);
+      transform: skewX(-8deg);
+      z-index: 3;
+    }
+    .accent-line2 {
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 456px;
+      width: 1px;
+      background: rgba(200,168,75,0.35);
+      transform: skewX(-8deg);
+      z-index: 3;
     }
 
+    /* ===== 左コンテンツ ===== */
     .hero-content {
       position: relative; z-index: 5;
-      padding: 80px 3.5rem 90px;
-      width: calc(100% - 420px);
+      padding: 70px 0 0 56px;
+      width: 520px;
     }
-    .eyebrow {
-      display: flex; align-items: center; gap: 0.75rem;
-      margin-bottom: 1.25rem;
-    }
-    .eyebrow-line { width: 28px; height: 1px; background: rgba(255,255,255,0.4); }
-    .eyebrow-text {
+
+    .logo {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.65rem; font-weight: 700;
-      letter-spacing: 0.3em; text-transform: uppercase;
-      color: rgba(255,255,255,0.45);
+      font-weight: 900; font-size: 0.78rem;
+      letter-spacing: 0.22em; color: #1a1a1a;
+      margin-bottom: 2.5rem;
+      display: flex; align-items: center; gap: 0.6rem;
     }
+    .logo-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: #1a1a1a;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-icon svg { width: 14px; height: 14px; fill: #fff; }
+
     .hero-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 7rem; line-height: 0.9;
-      color: #fff; letter-spacing: 0.04em;
-      margin-bottom: 1.25rem;
+      font-size: 2.6rem; font-weight: 900;
+      color: #1a1a1a; line-height: 1.35;
+      margin-bottom: 1rem; letter-spacing: -0.01em;
     }
-    .hero-title .dim { color: rgba(255,255,255,0.18); }
     .hero-sub {
-      font-size: 0.95rem; font-weight: 700; color: #fff;
-      line-height: 1.7; margin-bottom: 0.6rem;
-      letter-spacing: 0.04em;
+      font-size: 0.8rem; color: #666;
+      line-height: 1.9; margin-bottom: 2rem;
+      font-weight: 400;
     }
-    .hero-desc {
-      font-size: 0.75rem; color: rgba(255,255,255,0.45);
-      line-height: 1.9; margin-bottom: 1.75rem;
-    }
+
+    /* バッジ（多すぎ・欠陥④） */
     .badges {
-      display: flex; flex-wrap: wrap; gap: 0.45rem;
-      margin-bottom: 1.75rem;
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      margin-bottom: 2rem;
     }
     .bdg {
-      border: 1px solid rgba(255,255,255,0.2);
-      color: rgba(255,255,255,0.7);
-      font-size: 0.62rem; padding: 0.28rem 0.7rem;
-      border-radius: 9999px; letter-spacing: 0.04em;
-      white-space: nowrap;
-    }
-    .cta-group { display: flex; align-items: center; }
-    .btn-subtle {
-      border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.35);
-      background: transparent;
-      padding: 0.7rem 1.75rem; border-radius: 9999px;
-      font-size: 0.75rem; text-decoration: none;
+      background: #f4f4f4;
+      color: #444; font-size: 0.62rem;
+      padding: 0.3rem 0.75rem; border-radius: 2px;
       letter-spacing: 0.04em; white-space: nowrap;
     }
-    .stats {
-      position: absolute; bottom: 0; left: 0;
-      width: calc(100% - 420px);
-      border-top: 1px solid rgba(255,255,255,0.07);
-      display: flex; z-index: 5;
-    }
-    .stat {
-      flex: 1; padding: 0.9rem 1.5rem;
-      border-right: 1px solid rgba(255,255,255,0.06);
-      text-align: center;
-    }
-    .stat:last-child { border-right: none; }
-    .stat-n {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.6rem; color: #fff; line-height: 1;
-      margin-bottom: 0.15rem;
-    }
-    .stat-l {
-      font-size: 0.58rem; color: rgba(255,255,255,0.35);
+
+    /* CTA（目立たない・欠陥③） */
+    .btn-subtle {
+      display: inline-block;
+      border: 1px solid #ccc; color: #aaa;
+      background: transparent;
+      padding: 0.7rem 1.75rem; border-radius: 2px;
+      font-size: 0.75rem; text-decoration: none;
       letter-spacing: 0.08em;
     }
+
+    /* ===== 下部3カラム ===== */
+    .bottom-bar {
+      position: absolute; bottom: 0; left: 0;
+      width: 460px; z-index: 5;
+      display: flex; border-top: 1px solid #e8e8e8;
+    }
+    .b-item {
+      flex: 1; padding: 1rem 1.25rem;
+      border-right: 1px solid #e8e8e8;
+    }
+    .b-item:last-child { border-right: none; }
+    .b-label {
+      font-size: 0.58rem; color: #999;
+      margin-bottom: 0.2rem; letter-spacing: 0.06em;
+    }
+    .b-val {
+      font-size: 0.9rem; font-weight: 700; color: #1a1a1a;
+      letter-spacing: -0.01em;
+    }
+    .b-val span { font-size: 0.62rem; font-weight: 400; color: #888; margin-left: 0.2rem; }
   </style>
 </head>
 <body>
 <div class="hero">
-  <div class="bg-layer"></div>
-  <div class="bg-grid"></div>
-  <div class="bg-glow"></div>
 
-  <nav>
-    <div class="nav-logo">BODY MAKE GYM</div>
-  </nav>
+  <!-- 斜め画像パネル -->
+  <div class="img-panel">
+    <img src="trainer.png" alt="gym">
+  </div>
+  <div class="accent-line"></div>
+  <div class="accent-line2"></div>
 
-  <!-- Left content -->
+  <!-- 左コンテンツ -->
   <div class="hero-content">
-    <div class="eyebrow">
-      <div class="eyebrow-line"></div>
-      <div class="eyebrow-text">Personal Training Gym · Nagoya</div>
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 16 16"><path d="M8 2C4.686 2 2 4.686 2 8s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6zm0 10.5A4.5 4.5 0 1 1 8 3.5a4.5 4.5 0 0 1 0 9z"/></svg>
+      </div>
+      BODY MAKE GYM
     </div>
 
     <!-- 欠陥①: キャッチコピーが機能だけ訴求 -->
-    <div class="hero-title">TRAIN<br><span class="dim">HARD</span></div>
+    <div class="hero-title">完全個室で<br>マンツーマン指導</div>
 
     <!-- 欠陥②: ターゲット不明確 -->
-    <div class="hero-sub">完全個室 · マンツーマン指導 · 最新マシン完備</div>
-    <div class="hero-desc">
+    <div class="hero-sub">
       プロトレーナーによる科学的アプローチで、<br>
       あなたの身体づくりを全力でサポートします。
     </div>
@@ -188,14 +174,23 @@
     </div>
 
     <!-- 欠陥③: CTAが目立たない -->
-    <div class="cta-group">
-      <a href="#" class="btn-subtle">無料体験を予約する</a>
-    </div>
+    <a href="#" class="btn-subtle">無料体験を予約する</a>
   </div>
 
-  <!-- Right panel: trainer image -->
-  <div class="right-panel">
-    <img src="trainer.png" alt="trainer">
+  <!-- 下部バー -->
+  <div class="bottom-bar">
+    <div class="b-item">
+      <div class="b-label">月額料金</div>
+      <div class="b-val">¥9,800<span>〜</span></div>
+    </div>
+    <div class="b-item">
+      <div class="b-label">累計会員数</div>
+      <div class="b-val">500<span>名以上</span></div>
+    </div>
+    <div class="b-item">
+      <div class="b-label">顧客満足度</div>
+      <div class="b-val">98<span>%</span></div>
+    </div>
   </div>
 
 </div>
