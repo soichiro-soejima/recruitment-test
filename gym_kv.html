@@ -19,24 +19,17 @@
     /* ===== 斜め画像エリア ===== */
     .img-panel {
       position: absolute;
-      top: 0; right: -60px;
-      width: 620px; height: 600px;
-      transform: skewX(-8deg);
+      top: 0; right: 0;
+      width: 680px; height: 600px;
+      clip-path: polygon(14% 0%, 100% 0%, 100% 100%, 0% 100%);
       overflow: hidden;
       z-index: 1;
     }
-    .img-panel::before {
-      content: '';
-      position: absolute; inset: 0; z-index: 2;
-      background: linear-gradient(to right, #0d0d0d 0%, #0d0d0d 8%, transparent 28%);
-    }
     .img-panel img {
-      position: absolute;
-      top: 0; left: -20px;
-      width: 700px; height: 600px;
+      width: 100%; height: 100%;
       object-fit: cover;
       object-position: center top;
-      transform: skewX(8deg);
+      display: block;
     }
 
     /* ===== 左コンテンツ ===== */
