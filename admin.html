@@ -203,21 +203,8 @@
 </head>
 <body>
 
-<!-- PASSWORD -->
-<div id="screen-pw">
-  <div class="pw-card">
-    <div class="pw-icon">🔒</div>
-    <div class="pw-title">管理者認証</div>
-    <div class="pw-sub">パスワードを入力してください</div>
-    <div>
-      <label for="inp-pw">パスワード</label>
-      <input type="password" id="inp-pw" placeholder="••••••••"
-        onkeydown="if(event.key==='Enter')checkPw()">
-      <div class="pw-error" id="pw-error">パスワードが正しくありません</div>
-    </div>
-    <button class="btn-primary" onclick="checkPw()">ログイン</button>
-  </div>
-</div>
+<!-- PASSWORD (disabled) -->
+<div id="screen-pw" style="display:none"></div>
 
 <!-- DASHBOARD -->
 <div id="screen-dash">
@@ -266,15 +253,10 @@ const SB_HEADERS = {
 };
 
 function checkPw() {
-  const pw = document.getElementById('inp-pw').value;
-  if (pw === 'anomaly2024') {
-    document.getElementById('screen-pw').style.display = 'none';
-    document.getElementById('screen-dash').classList.add('active');
-    renderDash();
-  } else {
-    document.getElementById('pw-error').style.display = 'block';
-  }
+  document.getElementById('screen-dash').classList.add('active');
+  renderDash();
 }
+checkPw();
 
 async function loadResults() {
   try {
