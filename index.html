@@ -668,13 +668,14 @@ function selectOpt(i) {
 function nextQ() {
   stopTimer();
   const q = QS[S.qIdx];
+  const prefix = S.timedOut ? '[時間切れ] ' : '';
   if (q.type === 'mail') {
     const subj = document.getElementById('mail-subject');
     const body = document.getElementById('mail-body');
-    S.answers[S.qIdx] = '【件名】\n' + (subj ? subj.value.trim() : '') + '\n\n【本文】\n' + (body ? body.value.trim() : '');
+    S.answers[S.qIdx] = prefix + '【件名】\n' + (subj ? subj.value.trim() : '') + '\n\n【本文】\n' + (body ? body.value.trim() : '');
   } else if (q.type === 'text') {
     const ta = document.getElementById('free-text-ans');
-    S.answers[S.qIdx] = ta ? ta.value.trim() : '';
+    S.answers[S.qIdx] = prefix + (ta ? ta.value.trim() : '');
   } else {
     S.answers[S.qIdx] = S.selected;
   }
