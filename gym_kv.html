@@ -9,7 +9,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Noto Sans JP', sans-serif; background: #0d0d0d; overflow: hidden; }
 
-    /* Navigation */
     nav {
       position: absolute; top: 0; left: 0; right: 0; z-index: 20;
       display: flex; align-items: center; justify-content: space-between;
@@ -35,7 +34,6 @@
       white-space: nowrap;
     }
 
-    /* Hero */
     .hero {
       position: relative;
       width: 1200px; height: 600px;
@@ -44,7 +42,6 @@
       overflow: hidden;
     }
 
-    /* Background layers */
     .bg-layer {
       position: absolute; inset: 0;
       background: linear-gradient(120deg, #0d0d0d 0%, #141414 50%, #1a1a1a 100%);
@@ -64,26 +61,23 @@
       background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 65%);
     }
 
-    /* Right visual panel */
     .right-panel {
       position: absolute; right: 0; top: 0; bottom: 0;
       width: 420px;
       border-left: 1px solid rgba(255,255,255,0.07);
       overflow: hidden;
-      background: #f0efed;
+      background: #000;
     }
-    .trainer-wrap {
-      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 310px; height: 580px;
+    .right-panel img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      display: block;
     }
-    .trainer-wrap svg { width: 100%; height: 100%; }
 
-    /* Left content */
     .hero-content {
       position: relative; z-index: 5;
       padding: 0 3.5rem;
       padding-top: 80px;
-      max-width: 660px;
       width: calc(100% - 420px);
     }
     .eyebrow {
@@ -97,7 +91,6 @@
       letter-spacing: 0.3em; text-transform: uppercase;
       color: rgba(255,255,255,0.45);
     }
-
     .hero-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 7rem; line-height: 0.9;
@@ -105,7 +98,6 @@
       margin-bottom: 1.25rem;
     }
     .hero-title .dim { color: rgba(255,255,255,0.18); }
-
     .hero-sub {
       font-size: 0.95rem; font-weight: 700; color: #fff;
       line-height: 1.7; margin-bottom: 0.6rem;
@@ -115,8 +107,6 @@
       font-size: 0.75rem; color: rgba(255,255,255,0.45);
       line-height: 1.9; margin-bottom: 1.75rem;
     }
-
-    /* Badges row — 意図的に多すぎる */
     .badges {
       display: flex; flex-wrap: wrap; gap: 0.45rem;
       margin-bottom: 1.75rem;
@@ -128,8 +118,6 @@
       border-radius: 9999px; letter-spacing: 0.04em;
       white-space: nowrap;
     }
-
-    /* CTAs — 意図的に3つ */
     .cta-group { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
     .btn-white {
       background: #fff; color: #111;
@@ -149,8 +137,6 @@
       text-decoration: underline; cursor: pointer;
       white-space: nowrap; letter-spacing: 0.04em;
     }
-
-    /* Bottom stats */
     .stats {
       position: absolute; bottom: 0; left: 0;
       width: calc(100% - 420px);
@@ -199,17 +185,17 @@
       <div class="eyebrow-text">Personal Training Gym · Nagoya</div>
     </div>
 
-    <!-- キャッチコピーが機能だけ訴求（意図的な欠陥①） -->
+    <!-- 欠陥①: キャッチコピーが機能だけ訴求 -->
     <div class="hero-title">TRAIN<br><span class="dim">HARD</span></div>
 
-    <!-- ターゲット不明確（意図的な欠陥②） -->
+    <!-- 欠陥②: ターゲット不明確 -->
     <div class="hero-sub">完全個室 · マンツーマン指導 · 最新マシン完備</div>
     <div class="hero-desc">
       プロトレーナーによる科学的アプローチで、<br>
       あなたの身体づくりを全力でサポートします。
     </div>
 
-    <!-- 情報過多（意図的な欠陥④） -->
+    <!-- 欠陥④: 情報過多 -->
     <div class="badges">
       <span class="bdg">完全個室</span>
       <span class="bdg">マンツーマン指導</span>
@@ -220,7 +206,7 @@
       <span class="bdg">無料体験あり</span>
     </div>
 
-    <!-- CTAが不明瞭・資料請求をメインに（意図的な欠陥③） -->
+    <!-- 欠陥③: CTAが不明瞭・資料請求メイン -->
     <div class="cta-group">
       <a href="#" class="btn-white">資料請求する</a>
       <a href="#" class="btn-outline">お問い合わせはこちら</a>
@@ -228,92 +214,9 @@
     </div>
   </div>
 
-  <!-- Right panel: trainer silhouette -->
+  <!-- Right panel: trainer image -->
   <div class="right-panel">
-    <div class="trainer-wrap">
-      <!-- Female trainer doing bicep curl — solid black silhouette -->
-      <svg viewBox="0 0 310 580" fill="#111" xmlns="http://www.w3.org/2000/svg">
-        <!-- ===== DUMBBELL UP (right hand raised) ===== -->
-        <!-- right plate far -->
-        <ellipse cx="244" cy="82" rx="18" ry="22" fill="#111"/>
-        <!-- right plate near -->
-        <ellipse cx="238" cy="82" rx="14" ry="18" fill="#111"/>
-        <!-- bar -->
-        <rect x="175" y="78" width="64" height="8" rx="4" fill="#111"/>
-        <!-- left plate near -->
-        <ellipse cx="178" cy="82" rx="14" ry="18" fill="#111"/>
-        <!-- left plate far -->
-        <ellipse cx="172" cy="82" rx="18" ry="22" fill="#111"/>
-
-        <!-- ===== RIGHT ARM (raised curl) ===== -->
-        <!-- upper arm: shoulder to elbow -->
-        <path d="M188,132 C195,135 205,155 208,180 L212,205 C213,212 208,218 201,216 L193,214 C186,212 182,204 180,196 L175,165 L182,130 Z" fill="#111"/>
-        <!-- forearm: elbow angled up toward dumbbell -->
-        <path d="M201,216 C208,222 212,234 208,246 C204,258 193,262 185,256 L178,250 L180,196 L193,214 Z" fill="#111"/>
-        <!-- wrist/hand -->
-        <path d="M185,256 C178,262 172,258 170,248 L168,232 L178,250 Z" fill="#111"/>
-        <!-- connect hand to dumbbell bar -->
-        <rect x="168" y="78" width="18" height="160" rx="8" fill="#111"/>
-
-        <!-- ===== DUMBBELL DOWN (left hand, at side) ===== -->
-        <!-- left plate far -->
-        <ellipse cx="48" cy="330" rx="16" ry="20" fill="#111"/>
-        <!-- left plate near -->
-        <ellipse cx="54" cy="330" rx="12" ry="16" fill="#111"/>
-        <!-- bar -->
-        <rect x="54" y="326" width="44" height="8" rx="4" fill="#111"/>
-        <!-- right plate near -->
-        <ellipse cx="96" cy="330" rx="12" ry="16" fill="#111"/>
-        <!-- right plate far -->
-        <ellipse cx="102" cy="330" rx="16" ry="20" fill="#111"/>
-
-        <!-- ===== LEFT ARM (down, holding dumbbell) ===== -->
-        <!-- upper arm: shoulder down -->
-        <path d="M100,132 C90,135 76,155 72,180 L68,215 C66,225 72,234 82,233 L92,232 C100,231 104,222 106,213 L112,175 L108,130 Z" fill="#111"/>
-        <!-- forearm: elbow to wrist (straight down) -->
-        <path d="M82,233 C76,240 74,256 78,268 L80,320 L100,320 L100,260 L92,232 Z" fill="#111"/>
-        <!-- hand wrapping dumbbell -->
-        <rect x="72" y="312" width="28" height="28" rx="6" fill="#111"/>
-
-        <!-- ===== TORSO ===== -->
-        <!-- main body: V-taper shoulders to waist -->
-        <path d="M108,118 C96,122 86,140 82,162 L78,240 L78,295 L228,295 L228,240 L224,162 C220,140 210,122 198,118 L168,110 L138,110 Z" fill="#111"/>
-
-        <!-- ===== NECK ===== -->
-        <path d="M140,90 C138,98 136,108 136,116 L170,116 C170,108 168,98 166,90 Z" fill="#111"/>
-
-        <!-- ===== HEAD ===== -->
-        <!-- ponytail -->
-        <path d="M165,28 C172,18 180,10 178,22 C182,14 188,8 184,22 C186,12 196,10 188,28 C196,18 200,20 192,34 L175,44 Z" fill="#111"/>
-        <!-- ponytail base band -->
-        <ellipse cx="170" cy="46" rx="10" ry="7" transform="rotate(-20 170 46)" fill="#111"/>
-        <!-- head -->
-        <path d="M125,62 C125,36 136,22 153,22 C170,22 180,36 180,62 C180,84 170,96 153,96 C136,96 125,84 125,62 Z" fill="#111"/>
-        <!-- hair top -->
-        <path d="M125,52 C125,30 136,18 153,18 C170,18 180,30 180,52 L180,38 C180,20 170,10 153,10 C136,10 125,20 125,38 Z" fill="#111"/>
-        <!-- ear left -->
-        <ellipse cx="126" cy="68" rx="7" ry="9" fill="#111"/>
-
-        <!-- ===== HIPS / SHORTS ===== -->
-        <path d="M76,292 L230,292 L238,360 L68,360 Z" fill="#111"/>
-        <!-- shorts inner gap (skirt line) -->
-
-        <!-- ===== LEGS ===== -->
-        <!-- left leg: slightly splayed out -->
-        <path d="M74,358 L136,358 L128,530 L60,530 Z" fill="#111"/>
-        <!-- right leg -->
-        <path d="M162,358 L228,358 L246,530 L180,530 Z" fill="#111"/>
-
-        <!-- ===== SHOES ===== -->
-        <!-- left shoe -->
-        <path d="M52,526 L132,526 C134,526 136,530 136,534 L136,545 C136,548 134,550 132,550 L40,550 C36,550 34,546 36,542 Z" fill="#111"/>
-        <!-- right shoe -->
-        <path d="M178,526 L252,526 L264,542 C266,546 264,550 260,550 L180,550 C176,550 174,548 174,545 L174,534 C174,530 176,526 178,526 Z" fill="#111"/>
-
-        <!-- ground shadow -->
-        <ellipse cx="155" cy="560" rx="100" ry="10" fill="rgba(0,0,0,0.18)"/>
-      </svg>
-    </div>
+    <img src="trainer.png" alt="trainer">
   </div>
 
   <!-- Stats bar -->
