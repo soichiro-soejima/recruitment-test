@@ -16,11 +16,11 @@
       overflow: hidden;
     }
 
-    /* ===== 斜め画像エリア（右上→左下） ===== */
+    /* ===== 斜め画像エリア ===== */
     .img-panel {
       position: absolute;
-      top: -60px; right: -80px;
-      width: 680px; height: 780px;
+      top: 0; right: -60px;
+      width: 620px; height: 600px;
       transform: skewX(-8deg);
       overflow: hidden;
       z-index: 1;
@@ -28,34 +28,15 @@
     .img-panel::before {
       content: '';
       position: absolute; inset: 0; z-index: 2;
-      background: linear-gradient(to right, #0d0d0d 0%, transparent 18%);
+      background: linear-gradient(to right, #0d0d0d 0%, transparent 20%);
     }
     .img-panel img {
       position: absolute;
-      top: 60px; left: -20px;
-      width: 760px; height: 720px;
+      top: 0; left: -20px;
+      width: 700px; height: 600px;
       object-fit: cover;
       object-position: center top;
       transform: skewX(8deg);
-    }
-    /* アクセントライン */
-    .accent-line {
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 448px;
-      width: 4px;
-      background: linear-gradient(to bottom, #c8a84b 0%, #e8cc6a 50%, #c8a84b 100%);
-      transform: skewX(-8deg);
-      z-index: 3;
-    }
-    .accent-line2 {
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 456px;
-      width: 1px;
-      background: rgba(200,168,75,0.35);
-      transform: skewX(-8deg);
-      z-index: 3;
     }
 
     /* ===== 左コンテンツ ===== */
@@ -139,9 +120,6 @@
   <div class="img-panel">
     <img src="trainer.png" alt="gym">
   </div>
-  <div class="accent-line"></div>
-  <div class="accent-line2"></div>
-
   <!-- 左コンテンツ -->
   <div class="hero-content">
     <div class="logo">
