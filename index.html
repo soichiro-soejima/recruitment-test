@@ -119,11 +119,8 @@
       position: sticky; top: 0; z-index: 10;
     }
     .test-progress-container { flex: 1; }
-    .test-progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
     .category-badge { display: none; }
-    .progress-count { font-size: 0.72rem; color: var(--text-sub); font-family: var(--font-en); font-weight: 500; }
-    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--gradient); border-radius: 2px; transition: width 0.4s ease; }
+    .progress-count { font-size: 0.85rem; color: var(--text); font-family: var(--font-jp); font-weight: 500; }
 
     /* Timer */
     .timer-box {
@@ -400,13 +397,7 @@
 <div class="screen" id="screen-test">
   <div class="test-header">
     <div class="test-progress-container">
-      <div class="test-progress-info">
-        <span id="cat-badge" class="category-badge cat-行動特性" style="display:none"></span>
-        <span class="progress-count" id="prog-count">1 / 20</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
-      </div>
+      <span class="progress-count" id="prog-count">問題 1 / 5</span>
     </div>
     <div class="timer-box">
       <div class="timer-label">残り時間</div>
@@ -588,8 +579,7 @@ function renderQ() {
   const ov = card.querySelector('.timeout-overlay');
   if (ov) ov.remove();
 
-  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 5';
-  document.getElementById('prog-fill').style.width = (S.qIdx / 5 * 100) + '%';
+  document.getElementById('prog-count').textContent = '問題 ' + (S.qIdx + 1) + ' / 5';
   document.getElementById('q-meta').textContent = '問題 ' + (S.qIdx + 1);
   document.getElementById('q-text').innerHTML = q.text.replace(/\n/g, '<br>');
 
