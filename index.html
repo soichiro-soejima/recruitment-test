@@ -511,12 +511,12 @@ const QS = [
     text: '以下は、架空のパーソナルジム「BODY MAKE GYM」のWebサイトのキービジュアルです。\n※キービジュアルとは、Webサイトのトップページで最初に表示される大きなビジュアルエリアのことです。\n\n【ジムの前提情報】\n・ターゲット：30〜40代の働く男女\n・立地：名古屋市中心部・駅徒歩3分\n・強み：業界最安値水準（月額9,800円〜）\n・目的：まずは無料体験の申込数を増やしたい\n\nこのキービジュアルの問題点を指摘してください。（複数可）'
   },
   {
-    cat: '文章力', type: 'text',
-    text: 'あなたは広告代理店の営業担当者です。新規クライアントとの契約が決まり、プロジェクト開始に向けたキックオフミーティングを設定したいと考えています。\n\nクライアント担当者へ、日程調整のメールを書いてください。\n\n【条件】\n・クライアントの会社名・担当者名・業種など、前提情報は自由に設定して構いません\n・件名も含めて書いてください'
+    cat: '文章力', type: 'mail',
+    text: 'あなたはアノマリーマーケティング株式会社のコンサルタントです。新規クライアントとの契約が決まり、プロジェクト開始に向けたキックオフミーティングを設定したいと考えています。\n\nクライアントへ日程調整をするためのメールを書いてください。\n\n※クライアントの会社名・担当者名・業種など、前提情報は自由に設定して構いません\n※署名は不要です'
   },
   {
     cat: '仕事観', type: 'text',
-    text: '上司に仕事の相談をする際、あなたが気をつけていること（または気をつけたいと思うこと）を3つ挙げてください。'
+    text: '上司に仕事の相談をする際、あなたが気をつけていることを3つ挙げてください。'
   },
 ];
 
@@ -623,12 +623,28 @@ function renderQ() {
   let extra = '';
   if (q.tableHtml) extra = q.tableHtml;
   if (q.kvEmbed) extra = `<div class="kv-frame-wrap" onclick="document.getElementById('kv-modal').classList.add('open')"><iframe src="gym_kv.html" class="kv-frame" scrolling="no"></iframe></div>`;
-  grid.innerHTML = extra + `
-    <div class="free-text-label" style="${extra ? 'margin-top:1.25rem' : ''}">自由記述</div>
-    <textarea id="free-text-ans" class="free-text-area" placeholder="こちらに回答を入力してください"></textarea>`;
-  document.getElementById('free-text-ans').addEventListener('input', e => {
-    document.getElementById('btn-next').disabled = e.target.value.trim() === '';
-  });
+
+  if (q.type === 'mail') {
+    grid.innerHTML = extra + `
+      <div class="free-text-label" style="margin-top:0.5rem">件名</div>
+      <textarea id="mail-subject" class="free-text-area" style="min-height:60px;resize:none" placeholder="件名を入力してください"></textarea>
+      <div class="free-text-label" style="margin-top:1rem">本文</div>
+      <textarea id="mail-body" class="free-text-area" placeholder="本文を入力してください"></textarea>`;
+    const checkMail = () => {
+      const s = document.getElementById('mail-subject').value.trim();
+      const b = document.getElementById('mail-body').value.trim();
+      document.getElementById('btn-next').disabled = !(s && b);
+    };
+    document.getElementById('mail-subject').addEventListener('input', checkMail);
+    document.getElementById('mail-body').addEventListener('input', checkMail);
+  } else {
+    grid.innerHTML = extra + `
+      <div class="free-text-label" style="${extra ? 'margin-top:1.25rem' : ''}">自由記述</div>
+      <textarea id="free-text-ans" class="free-text-area" placeholder="こちらに回答を入力してください"></textarea>`;
+    document.getElementById('free-text-ans').addEventListener('input', e => {
+      document.getElementById('btn-next').disabled = e.target.value.trim() === '';
+    });
+  }
 
   const nextBtn = document.getElementById('btn-next');
   nextBtn.textContent = S.qIdx < 4 ? '次の問題 →' : '結果を見る';
@@ -652,7 +668,11 @@ function selectOpt(i) {
 function nextQ() {
   stopTimer();
   const q = QS[S.qIdx];
-  if (q.type === 'text') {
+  if (q.type === 'mail') {
+    const subj = document.getElementById('mail-subject');
+    const body = document.getElementById('mail-body');
+    S.answers[S.qIdx] = '【件名】\n' + (subj ? subj.value.trim() : '') + '\n\n【本文】\n' + (body ? body.value.trim() : '');
+  } else if (q.type === 'text') {
     const ta = document.getElementById('free-text-ans');
     S.answers[S.qIdx] = ta ? ta.value.trim() : '';
   } else {
