@@ -352,7 +352,7 @@
       <div class="test-info-grid">
         <div>
           <span class="test-info-label">問題数</span>
-          <span class="test-info-value">6問</span>
+          <span class="test-info-value">5問</span>
         </div>
         <div>
           <span class="test-info-label">制限時間</span>
@@ -476,10 +476,6 @@ const QS = [
     text: '名古屋市内にある美容室の数を推定してください。\n計算の過程や考え方も含めて書いてください。'
   },
   {
-    cat: '課題分析', type: 'text',
-    text: 'あなたはWeb広告代理店の営業担当です。以下の状況を読んで、考えられる原因と、改善策を立てるためにヒアリングしたい内容を書いてください。\n\n【状況】\n新規クライアントへの営業活動を行っているが、3ヶ月連続で新規契約数が目標を下回っている。営業担当全員が週10件ペースで新規架電をしており、初回アポ獲得率は目標通り推移している。しかし、提案後の成約率が大きく落ちている。'
-  },
-  {
     cat: '数値への感度', type: 'text', tableHtml: TABLE_Q3,
     text: '以下は、アノマリーマーケティングの今月の営業数値（目標 vs 現状）です。\nこの数値を見て気づいたことと、改善策を立てるためにヒアリングしたい内容を書いてください。'
   },
@@ -535,7 +531,7 @@ function startTest() {
   if (!name || !email) { alert('お名前とメールアドレスを入力してください'); return; }
   if (!email.includes('@')) { alert('有効なメールアドレスを入力してください'); return; }
   S.name = name; S.email = email;
-  S.qIdx = 0; S.answers = new Array(6).fill(null);
+  S.qIdx = 0; S.answers = new Array(5).fill(null);
   S.tabSwitches = 0; S.selected = null;
   showScreen('test');
   renderQ();
@@ -592,8 +588,8 @@ function renderQ() {
   const ov = card.querySelector('.timeout-overlay');
   if (ov) ov.remove();
 
-  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 6';
-  document.getElementById('prog-fill').style.width = (S.qIdx / 6 * 100) + '%';
+  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 5';
+  document.getElementById('prog-fill').style.width = (S.qIdx / 5 * 100) + '%';
   document.getElementById('q-meta').textContent = '問題 ' + (S.qIdx + 1);
   document.getElementById('q-text').innerHTML = q.text.replace(/\n/g, '<br>');
 
@@ -609,7 +605,7 @@ function renderQ() {
   });
 
   const nextBtn = document.getElementById('btn-next');
-  nextBtn.textContent = S.qIdx < 5 ? '次の問題 →' : '結果を見る';
+  nextBtn.textContent = S.qIdx < 4 ? '次の問題 →' : '結果を見る';
   nextBtn.disabled = true;
 
   card.classList.remove('fade-in');
@@ -636,7 +632,7 @@ function nextQ() {
   } else {
     S.answers[S.qIdx] = S.selected;
   }
-  if (S.qIdx >= 5) { finishTest(); return; }
+  if (S.qIdx >= 4) { finishTest(); return; }
   S.qIdx++;
   renderQ();
   startTimer();
