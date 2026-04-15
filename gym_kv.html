@@ -7,12 +7,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Noto Sans JP', sans-serif; background: #fff; overflow: hidden; }
+    body { font-family: 'Noto Sans JP', sans-serif; background: #0d0d0d; overflow: hidden; }
 
     .hero {
       position: relative;
       width: 1200px; height: 600px;
-      background: #fff;
+      background: #0d0d0d;
       overflow: hidden;
     }
 
@@ -28,7 +28,7 @@
     .img-panel::before {
       content: '';
       position: absolute; inset: 0; z-index: 2;
-      background: linear-gradient(to right, #fff 0%, transparent 18%);
+      background: linear-gradient(to right, #0d0d0d 0%, transparent 18%);
     }
     .img-panel img {
       position: absolute;
@@ -68,70 +68,68 @@
     .logo {
       font-family: 'Montserrat', sans-serif;
       font-weight: 900; font-size: 0.78rem;
-      letter-spacing: 0.22em; color: #1a1a1a;
+      letter-spacing: 0.22em; color: #fff;
       margin-bottom: 2.5rem;
       display: flex; align-items: center; gap: 0.6rem;
     }
     .logo-icon {
       width: 28px; height: 28px; border-radius: 50%;
-      background: #1a1a1a;
+      background: #fff;
       display: flex; align-items: center; justify-content: center;
     }
-    .logo-icon svg { width: 14px; height: 14px; fill: #fff; }
+    .logo-icon svg { width: 14px; height: 14px; fill: #111; }
 
     .hero-title {
       font-size: 2.6rem; font-weight: 900;
-      color: #1a1a1a; line-height: 1.35;
+      color: #fff; line-height: 1.35;
       margin-bottom: 1rem; letter-spacing: -0.01em;
     }
     .hero-sub {
-      font-size: 0.8rem; color: #666;
+      font-size: 0.8rem; color: rgba(255,255,255,0.5);
       line-height: 1.9; margin-bottom: 2rem;
       font-weight: 400;
     }
 
-    /* バッジ（多すぎ・欠陥④） */
     .badges {
       display: flex; flex-wrap: wrap; gap: 0.4rem;
       margin-bottom: 2rem;
     }
     .bdg {
-      background: #f4f4f4;
-      color: #444; font-size: 0.62rem;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.6); font-size: 0.62rem;
       padding: 0.3rem 0.75rem; border-radius: 2px;
       letter-spacing: 0.04em; white-space: nowrap;
     }
 
-    /* CTA（目立たない・欠陥③） */
     .btn-subtle {
       display: inline-block;
-      border: 1px solid #ccc; color: #aaa;
+      border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.3);
       background: transparent;
       padding: 0.7rem 1.75rem; border-radius: 2px;
       font-size: 0.75rem; text-decoration: none;
       letter-spacing: 0.08em;
     }
 
-    /* ===== 下部3カラム ===== */
     .bottom-bar {
       position: absolute; bottom: 0; left: 0;
       width: 460px; z-index: 5;
-      display: flex; border-top: 1px solid #e8e8e8;
+      display: flex; border-top: 1px solid rgba(255,255,255,0.08);
     }
     .b-item {
       flex: 1; padding: 1rem 1.25rem;
-      border-right: 1px solid #e8e8e8;
+      border-right: 1px solid rgba(255,255,255,0.08);
     }
     .b-item:last-child { border-right: none; }
     .b-label {
-      font-size: 0.58rem; color: #999;
+      font-size: 0.58rem; color: rgba(255,255,255,0.35);
       margin-bottom: 0.2rem; letter-spacing: 0.06em;
     }
     .b-val {
-      font-size: 0.9rem; font-weight: 700; color: #1a1a1a;
+      font-size: 0.9rem; font-weight: 700; color: #fff;
       letter-spacing: -0.01em;
     }
-    .b-val span { font-size: 0.62rem; font-weight: 400; color: #888; margin-left: 0.2rem; }
+    .b-val span { font-size: 0.62rem; font-weight: 400; color: rgba(255,255,255,0.45); margin-left: 0.2rem; }
   </style>
 </head>
 <body>
