@@ -355,11 +355,11 @@
         </div>
         <div>
           <span class="test-info-label">制限時間</span>
-          <span class="test-info-value">各3分</span>
+          <span class="test-info-value">各5分</span>
         </div>
         <div>
           <span class="test-info-label">合計</span>
-          <span class="test-info-value">最大18分</span>
+          <span class="test-info-value">最大30分</span>
         </div>
       </div>
     </div>
@@ -370,6 +370,12 @@
     <div class="form-group">
       <label for="inp-email">メールアドレス</label>
       <input type="email" id="inp-email" placeholder="yamada@example.com">
+    </div>
+    <div style="background:#fff8f0;border:1px solid #f5d9b0;border-radius:4px;padding:1rem 1.25rem;margin-bottom:1.25rem;font-size:0.78rem;line-height:1.9;color:#7a5a30;">
+      <div style="font-weight:700;margin-bottom:0.3rem;color:#5a3a10;">受験上の注意</div>
+      <div>・<strong>パソコンでの受験</strong>を推奨します。スマートフォンは使用しないでください。</div>
+      <div>・テスト中は<strong>タブの切り替えを禁止</strong>します。切り替えはシステム側で検知されます。</div>
+      <div>・各問題には5分の制限時間があります。時間切れで次の問題に自動移動します。</div>
     </div>
     <button class="btn-primary" onclick="startTest()">テストを開始する →</button>
   </div>
@@ -545,7 +551,7 @@ function startTest() {
 // ===== TIMER =====
 function startTimer() {
   stopTimer();
-  S.timeLeft = 180; S.timedOut = false;
+  S.timeLeft = 300; S.timedOut = false;
   drawTimer();
   S.timerID = setInterval(tick, 1000);
 }
@@ -562,9 +568,9 @@ function drawTimer() {
   const ring = document.getElementById('timer-ring');
   const num = document.getElementById('timer-num');
   if (!ring) return;
-  ring.style.strokeDashoffset = CIRC * (1 - t / 180);
+  ring.style.strokeDashoffset = CIRC * (1 - t / 300);
   num.textContent = t;
-  const cls = t <= 30 ? 'danger' : t <= 60 ? 'warn' : '';
+  const cls = t <= 60 ? 'danger' : t <= 120 ? 'warn' : '';
   ring.className = 'timer-ring' + (cls ? ' ' + cls : '');
   num.className = 'timer-num' + (cls ? ' ' + cls : '');
 }
