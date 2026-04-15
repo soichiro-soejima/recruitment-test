@@ -355,10 +355,14 @@ function closeModal(e) {
 async function exportCSV() {
   const results = await loadResults();
   if (!results.length) { alert('データがありません'); return; }
-  const header = ['氏名','メール','受験日時','タブ切替回数','Q1','Q2','Q3','Q4','Q5','Q6'];
+  const header = ['氏名','メール','受験日時','タブ切替回数','Q1回答','Q1回答時間','Q2回答','Q2回答時間','Q3回答','Q3回答時間','Q4回答','Q4回答時間','Q5回答','Q5回答時間'];
   const rows = results.map(r => {
     const ans = r.answers || [];
-    return [r.name, r.email, r.date, r.tab_switches, ...ans.map(a => a ? a.answeredText || '' : '')];
+    const cols = ans.flatMap(a => {
+      const t = a && a.timeTaken != null ? `${Math.floor(a.timeTaken/60)}分${a.timeTaken%60}秒` : '—';
+      return [a ? a.answeredText || '' : '', t];
+    });
+    return [r.name, r.email, r.date, r.tab_switches, ...cols];
   });
   const csv = [header, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
