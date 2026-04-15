@@ -58,17 +58,27 @@
       background: #fff;
       display: flex; align-items: center; justify-content: center;
     }
-    .logo-icon svg { width: 14px; height: 14px; fill: #111; }
-
-    .hero-title {
-      font-size: 2.6rem; font-weight: 900;
-      color: #fff; line-height: 1.35;
-      margin-bottom: 1rem; letter-spacing: -0.01em;
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900; font-size: 1rem;
+      letter-spacing: 0.2em; color: #fff;
+      margin-bottom: 1.5rem;
     }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 7rem; line-height: 0.9;
+      color: #fff; letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title .dim { color: rgba(255,255,255,0.18); }
     .hero-sub {
-      font-size: 0.8rem; color: rgba(255,255,255,0.5);
-      line-height: 1.9; margin-bottom: 2rem;
-      font-weight: 400;
+      font-size: 0.95rem; font-weight: 700; color: #fff;
+      line-height: 1.7; margin-bottom: 0.6rem;
+      letter-spacing: 0.04em;
+    }
+    .hero-desc {
+      font-size: 0.75rem; color: rgba(255,255,255,0.45);
+      line-height: 1.9; margin-bottom: 1.75rem;
     }
 
     .badges {
@@ -103,18 +113,14 @@
   </div>
   <!-- 左コンテンツ -->
   <div class="hero-content">
-    <div class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 16 16"><path d="M8 2C4.686 2 2 4.686 2 8s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6zm0 10.5A4.5 4.5 0 1 1 8 3.5a4.5 4.5 0 0 1 0 9z"/></svg>
-      </div>
-      BODY MAKE GYM
-    </div>
+    <div class="logo">BODY MAKE GYM</div>
 
     <!-- 欠陥①: キャッチコピーが機能だけ訴求 -->
-    <div class="hero-title">完全個室で<br>マンツーマン指導</div>
+    <div class="hero-title">TRAIN<br><span class="dim">HARD</span></div>
 
     <!-- 欠陥②: ターゲット不明確 -->
-    <div class="hero-sub">
+    <div class="hero-sub">完全個室 · マンツーマン指導 · 最新マシン完備</div>
+    <div class="hero-desc">
       プロトレーナーによる科学的アプローチで、<br>
       あなたの身体づくりを全力でサポートします。
     </div>
