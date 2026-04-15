@@ -590,12 +590,23 @@ async function startTest() {
   S.qIdx = 0; S.answers = new Array(5).fill(null);
   S.tabSwitches = 0; S.selected = null;
 
-  // sessionStorageに進行中フラグを保存
+  // sessionStorageに進行中フラグと初期状態を保存
   sessionStorage.setItem('am_test_in_progress', '1');
+  saveProgress();
 
   showScreen('test');
   renderQ();
   startTimer();
+}
+
+// ===== PROGRESS SAVE =====
+function saveProgress() {
+  sessionStorage.setItem('am_test_progress', JSON.stringify({
+    name: S.name, email: S.email,
+    qIdx: S.qIdx, answers: S.answers,
+    tabSwitches: S.tabSwitches,
+    date: new Date().toLocaleString('ja-JP'),
+  }));
 }
 
 // ===== TIMER =====
@@ -712,6 +723,7 @@ function nextQ() {
   } else {
     S.answers[S.qIdx] = S.selected;
   }
+  saveProgress();
   if (S.qIdx >= 4) { finishTest(); return; }
   S.qIdx++;
   renderQ();
@@ -886,7 +898,31 @@ function initRoute() {
   }
   // テスト進行中にページを更新した場合
   if (sessionStorage.getItem('am_test_in_progress')) {
-    showBlocked('テストを再開できません', 'ページの更新はテストの不正行為とみなされます。<br>受験を最初からやり直す場合は、担当者にご連絡ください。');
+    // 途中データをSupabaseへ送信
+    const raw = sessionStorage.getItem('am_test_progress');
+    if (raw) {
+      try {
+        const p = JSON.parse(raw);
+        const answersDetail = QS.map((q, i) => ({
+          qNum: i + 1, cat: q.cat, type: 'text',
+          text: q.text,
+          answeredText: (p.answers[i] != null ? p.answers[i] : '') || (i < p.qIdx ? '未回答' : '未受験（ページ更新）'),
+        }));
+        fetch(SB_URL + '/rest/v1/recruitment_results', {
+          method: 'POST',
+          headers: SB_HEADERS,
+          body: JSON.stringify({
+            name: p.name, email: p.email, date: p.date,
+            tab_switches: p.tabSwitches,
+            answers: answersDetail,
+          }),
+        });
+      } catch(e) {}
+    }
+    sessionStorage.removeItem('am_test_in_progress');
+    sessionStorage.removeItem('am_test_progress');
+    sessionStorage.setItem('am_test_done', '1');
+    showBlocked('テストを再開できません', 'ページの更新はテストの不正行為とみなされます。<br>それまでの回答は記録されました。<br>ご不明な点は担当者にお問い合わせください。');
     return;
   }
   showScreen('landing');
