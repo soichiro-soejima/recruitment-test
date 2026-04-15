@@ -324,8 +324,36 @@
     .q-table tbody td:nth-child(2), .q-table tbody td:nth-child(3) { font-family: var(--font-en); font-weight: 600; }
 
     /* Q4 KV iframe */
-    .kv-frame-wrap { margin: 1rem 0; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; height: 300px; }
-    .kv-frame { width: 1200px; height: 600px; border: none; display: block; transform: scale(0.5); transform-origin: top left; }
+    .kv-frame-wrap {
+      margin: 1rem 0; border: 1px solid var(--border); border-radius: 4px;
+      overflow: hidden; height: 300px; cursor: zoom-in; position: relative;
+    }
+    .kv-frame-wrap::after {
+      content: '🔍 クリックで拡大';
+      position: absolute; bottom: 0.5rem; right: 0.75rem;
+      background: rgba(0,0,0,0.55); color: #fff;
+      font-size: 0.65rem; padding: 0.25rem 0.6rem; border-radius: 4px;
+      pointer-events: none;
+    }
+    .kv-frame { width: 1200px; height: 600px; border: none; display: block; transform: scale(0.5); transform-origin: top left; pointer-events: none; }
+
+    /* KV modal */
+    .kv-modal {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.85);
+      align-items: center; justify-content: center;
+    }
+    .kv-modal.open { display: flex; }
+    .kv-modal-inner {
+      position: relative; width: 90vw; max-width: 1200px;
+      height: 75vh; border-radius: 4px; overflow: hidden;
+    }
+    .kv-modal-inner iframe { width: 100%; height: 100%; border: none; }
+    .kv-modal-close {
+      position: absolute; top: -2rem; right: 0;
+      background: none; border: none; color: #fff;
+      font-size: 1.5rem; cursor: pointer; line-height: 1;
+    }
 
     @media (max-width: 600px) {
       .landing-card, .results-card { padding: 2rem 1.5rem; }
@@ -338,6 +366,14 @@
 <body>
 
 <div class="tab-warning" id="tab-warning">⚠ タブの切り替えが検知されました</div>
+
+<!-- KV Modal -->
+<div class="kv-modal" id="kv-modal" onclick="closeKvModal(event)">
+  <div class="kv-modal-inner">
+    <button class="kv-modal-close" onclick="document.getElementById('kv-modal').classList.remove('open')">✕</button>
+    <iframe src="gym_kv.html" scrolling="no"></iframe>
+  </div>
+</div>
 
 
 <!-- LANDING -->
@@ -586,7 +622,7 @@ function renderQ() {
   const grid = document.getElementById('opts');
   let extra = '';
   if (q.tableHtml) extra = q.tableHtml;
-  if (q.kvEmbed) extra = `<div class="kv-frame-wrap"><iframe src="gym_kv.html" class="kv-frame" scrolling="no"></iframe></div>`;
+  if (q.kvEmbed) extra = `<div class="kv-frame-wrap" onclick="document.getElementById('kv-modal').classList.add('open')"><iframe src="gym_kv.html" class="kv-frame" scrolling="no"></iframe></div>`;
   grid.innerHTML = extra + `
     <div class="free-text-label" style="${extra ? 'margin-top:1.25rem' : ''}">自由記述</div>
     <textarea id="free-text-ans" class="free-text-area" placeholder="こちらに回答を入力してください"></textarea>`;
@@ -771,6 +807,13 @@ document.addEventListener('keydown', e => {
 document.addEventListener('keydown', e => {
   if (S.screen === 'password' && e.key === 'Enter') checkPw();
 });
+
+// ===== KV MODAL =====
+function closeKvModal(e) {
+  if (e.target === document.getElementById('kv-modal')) {
+    document.getElementById('kv-modal').classList.remove('open');
+  }
+}
 
 // ===== HASH ROUTING =====
 function initRoute() {
