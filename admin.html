@@ -267,12 +267,21 @@ async function loadResults() {
 
 async function renderDash() {
   const results = await loadResults();
-  const tabAvg = results.length ? (results.reduce((a,r) => a + r.tab_switches, 0) / results.length).toFixed(1) : '—';
+
+  // 問題ごとの平均回答時間を計算
+  const qAvg = [1,2,3,4,5].map(qNum => {
+    const times = results.flatMap(r => {
+      const a = (r.answers || []).find(a => a.qNum === qNum);
+      return (a && a.timeTaken != null) ? [a.timeTaken] : [];
+    });
+    if (!times.length) return '—';
+    const avg = Math.round(times.reduce((s,t) => s+t, 0) / times.length);
+    return `${Math.floor(avg/60)}分${avg%60}秒`;
+  });
 
   document.getElementById('dash-stats').innerHTML = `
     <div class="stat-card"><div class="stat-label">受験者数</div><div class="stat-val">${results.length}</div></div>
-    <div class="stat-card"><div class="stat-label">タブ切替あり</div><div class="stat-val">${results.filter(r => r.tab_switches > 0).length}</div></div>
-    <div class="stat-card"><div class="stat-label">平均タブ切替</div><div class="stat-val">${tabAvg}</div></div>`;
+    ${qAvg.map((t,i) => `<div class="stat-card"><div class="stat-label">Q${i+1} 平均回答時間</div><div class="stat-val" style="font-size:1.2rem">${t}</div></div>`).join('')}`;
 
   const tbody = document.getElementById('dash-tbody');
   if (!results.length) {
