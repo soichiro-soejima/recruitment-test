@@ -3,302 +3,302 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BODY MAKE GYM KV</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <title>BODY MAKE GYM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Noto Sans JP', sans-serif; background: #111; }
+    body { font-family: 'Noto Sans JP', sans-serif; background: #0d0d0d; overflow: hidden; }
 
-    .kv {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      height: 600px;
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a1a00 100%);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
+    /* Navigation */
+    nav {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 3rem;
     }
-
-    /* 背景装飾 */
-    .kv::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 70% 50%, rgba(180,120,0,0.15) 0%, transparent 60%),
-        radial-gradient(ellipse at 20% 80%, rgba(180,120,0,0.08) 0%, transparent 50%);
+    .nav-logo {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900; font-size: 1rem;
+      letter-spacing: 0.2em; color: #fff;
     }
-
-    /* 左側コンテンツ */
-    .kv-content {
-      position: relative;
-      z-index: 2;
-      padding: 0 60px;
-      flex: 1;
+    .nav-links { display: flex; gap: 2.25rem; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.65); font-size: 0.72rem;
+      text-decoration: none; letter-spacing: 0.1em;
+      font-family: 'Montserrat', sans-serif; font-weight: 400;
     }
-
-    .kv-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.3em;
-      color: #b8860b;
-      margin-bottom: 20px;
-      text-transform: uppercase;
-    }
-
-    .kv-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 5rem;
-      color: #ffffff;
-      line-height: 1;
-      margin-bottom: 8px;
-      letter-spacing: 0.05em;
-    }
-
-    .kv-title span {
-      color: #c9a227;
-    }
-
-    .kv-subtitle {
-      font-size: 1.1rem;
-      color: #aaa;
-      margin-bottom: 32px;
-      line-height: 1.6;
-    }
-
-    /* ダメな点①：機能だけ訴求・ターゲット不明 */
-    .kv-features {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 32px;
-    }
-
-    .feature-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.8rem;
-      color: #ccc;
-    }
-
-    .feature-dot {
-      width: 6px;
-      height: 6px;
-      background: #c9a227;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* ダメな点③：CTAが分かりにくい */
-    .kv-buttons {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-main {
-      background: #c9a227;
-      color: #000;
-      border: none;
-      padding: 12px 28px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-    }
-
-    /* CTAが分かりにくい：同じような見た目のボタンが複数 */
-    .btn-sub {
-      background: transparent;
-      color: #c9a227;
-      border: 1px solid #c9a227;
-      padding: 12px 28px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-    }
-
-    .btn-sub2 {
-      background: transparent;
-      color: #888;
-      border: 1px solid #555;
-      padding: 12px 28px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-    }
-
-    /* 右側：画像エリア */
-    .kv-image {
-      width: 420px;
-      height: 100%;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .kv-image-bg {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(160deg, #1a1a1a, #0d0d0d);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* 人物シルエット */
-    .silhouette {
-      width: 280px;
-      height: 480px;
-      position: relative;
-    }
-
-    .silhouette svg {
-      width: 100%;
-      height: 100%;
-      opacity: 0.85;
-    }
-
-    /* 右上に情報過多な要素 */
-    .badge-area {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 3;
-    }
-
-    .badge {
-      background: rgba(201,162,39,0.9);
-      color: #000;
-      font-size: 0.6rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      letter-spacing: 0.05em;
-      text-align: center;
-    }
-
-    /* ダメな点④：情報過多 */
-    .info-overflow {
-      position: absolute;
-      bottom: 20px;
-      left: 60px;
-      right: 440px;
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      z-index: 3;
-    }
-
-    .info-tag {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #999;
-      font-size: 0.62rem;
-      padding: 4px 10px;
+    .nav-cta {
+      background: #fff; color: #111;
+      padding: 0.55rem 1.5rem; border-radius: 9999px;
+      font-size: 0.72rem; font-weight: 700;
+      text-decoration: none; letter-spacing: 0.06em;
+      font-family: 'Noto Sans JP', sans-serif;
       white-space: nowrap;
     }
 
-    /* ロゴ */
-    .logo {
+    /* Hero */
+    .hero {
+      position: relative;
+      width: 1200px; height: 600px;
+      background: #0d0d0d;
+      display: flex; align-items: center;
+      overflow: hidden;
+    }
+
+    /* Background layers */
+    .bg-layer {
+      position: absolute; inset: 0;
+      background: linear-gradient(120deg, #0d0d0d 0%, #141414 50%, #1a1a1a 100%);
+    }
+    .bg-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .bg-glow {
       position: absolute;
-      top: 24px;
-      left: 60px;
+      right: 20%; top: 50%;
+      transform: translateY(-50%);
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 65%);
+    }
+
+    /* Right visual panel */
+    .right-panel {
+      position: absolute; right: 0; top: 0; bottom: 0;
+      width: 420px;
+      border-left: 1px solid rgba(255,255,255,0.07);
+      background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem; padding: 2rem;
+    }
+    /* Stylized trainer silhouette */
+    .silhouette {
+      position: absolute;
+      bottom: 0; right: 60px;
+      width: 200px; height: 420px;
+    }
+    .silhouette-body {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 90px; height: 380px;
+      background: linear-gradient(to top, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 100%);
+      clip-path: polygon(30% 0%, 70% 0%, 85% 30%, 90% 60%, 75% 100%, 25% 100%, 10% 60%, 15% 30%);
+    }
+    .silhouette-head {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 50px; height: 50px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+
+    /* Feature pills in right panel */
+    .feature-list { display: flex; flex-direction: column; gap: 0.6rem; width: 100%; }
+    .feature-item {
+      display: flex; align-items: center; gap: 0.75rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px; padding: 0.7rem 1rem;
+    }
+    .feature-icon {
+      width: 28px; height: 28px; border-radius: 6px;
+      background: rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; flex-shrink: 0;
+    }
+    .feature-text { font-size: 0.72rem; color: rgba(255,255,255,0.75); letter-spacing: 0.04em; }
+
+    /* Left content */
+    .hero-content {
+      position: relative; z-index: 5;
+      padding: 0 3.5rem;
+      padding-top: 80px;
+      max-width: 660px;
+      width: calc(100% - 420px);
+    }
+    .eyebrow {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .eyebrow-line { width: 28px; height: 1px; background: rgba(255,255,255,0.4); }
+    .eyebrow-text {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .hero-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      color: #c9a227;
-      letter-spacing: 0.15em;
-      z-index: 3;
+      font-size: 7rem; line-height: 0.9;
+      color: #fff; letter-spacing: 0.04em;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title .dim { color: rgba(255,255,255,0.18); }
+
+    .hero-sub {
+      font-size: 0.95rem; font-weight: 700; color: #fff;
+      line-height: 1.7; margin-bottom: 0.6rem;
+      letter-spacing: 0.04em;
+    }
+    .hero-desc {
+      font-size: 0.75rem; color: rgba(255,255,255,0.45);
+      line-height: 1.9; margin-bottom: 1.75rem;
+    }
+
+    /* Badges row — 意図的に多すぎる */
+    .badges {
+      display: flex; flex-wrap: wrap; gap: 0.45rem;
+      margin-bottom: 1.75rem;
+    }
+    .bdg {
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.7);
+      font-size: 0.62rem; padding: 0.28rem 0.7rem;
+      border-radius: 9999px; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* CTAs — 意図的に3つ */
+    .cta-group { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .btn-white {
+      background: #fff; color: #111;
+      padding: 0.75rem 1.75rem; border-radius: 9999px;
+      font-weight: 700; font-size: 0.8rem;
+      text-decoration: none; letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .btn-outline {
+      border: 1px solid rgba(255,255,255,0.35); color: #fff;
+      padding: 0.7rem 1.5rem; border-radius: 9999px;
+      font-size: 0.75rem; text-decoration: none;
+      letter-spacing: 0.04em; white-space: nowrap;
+    }
+    .btn-text {
+      color: rgba(255,255,255,0.45); font-size: 0.72rem;
+      text-decoration: underline; cursor: pointer;
+      white-space: nowrap; letter-spacing: 0.04em;
+    }
+
+    /* Bottom stats */
+    .stats {
+      position: absolute; bottom: 0; left: 0;
+      width: calc(100% - 420px);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex; z-index: 5;
+    }
+    .stat {
+      flex: 1; padding: 0.9rem 1.5rem;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+    }
+    .stat:last-child { border-right: none; }
+    .stat-n {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; color: #fff; line-height: 1;
+      margin-bottom: 0.15rem;
+    }
+    .stat-l {
+      font-size: 0.58rem; color: rgba(255,255,255,0.35);
+      letter-spacing: 0.08em;
     }
   </style>
 </head>
 <body>
+<div class="hero">
+  <div class="bg-layer"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
 
-<div class="kv">
+  <nav>
+    <div class="nav-logo">BODY MAKE GYM</div>
+    <ul class="nav-links">
+      <li><a href="#">特徴</a></li>
+      <li><a href="#">料金</a></li>
+      <li><a href="#">トレーナー</a></li>
+      <li><a href="#">アクセス</a></li>
+      <li><a href="#">よくある質問</a></li>
+    </ul>
+    <a href="#" class="nav-cta">無料体験を予約する</a>
+  </nav>
 
-  <div class="logo">BODY MAKE GYM</div>
-
-  <div class="kv-content">
-    <div class="kv-label">Personal Training Gym</div>
-
-    <!-- ダメな点①：機能だけ訴求、ターゲット不明 -->
-    <div class="kv-title">TRAIN<br><span>HARD</span></div>
-    <div class="kv-subtitle">
-      最新マシン完備・専属トレーナー在籍<br>
-      週3回プログラム・栄養指導あり・個室対応可能
+  <!-- Left content -->
+  <div class="hero-content">
+    <div class="eyebrow">
+      <div class="eyebrow-line"></div>
+      <div class="eyebrow-text">Personal Training Gym · Nagoya</div>
     </div>
 
-    <!-- ダメな点①②：機能の羅列、誰向けか不明 -->
-    <div class="kv-features">
-      <div class="feature-item"><div class="feature-dot"></div>最新トレーニングマシン20種類以上完備</div>
-      <div class="feature-item"><div class="feature-dot"></div>国家資格取得トレーナーによる個別指導</div>
-      <div class="feature-item"><div class="feature-dot"></div>入会金・事務手数料・管理費・施設利用料込み</div>
-      <div class="feature-item"><div class="feature-dot"></div>駐車場完備・シャワールーム・更衣室あり</div>
-      <div class="feature-item"><div class="feature-dot"></div>オンラインフォローアップ対応・アプリ管理</div>
+    <!-- キャッチコピーが機能だけ訴求（意図的な欠陥①） -->
+    <div class="hero-title">TRAIN<br><span class="dim">HARD</span></div>
+
+    <!-- ターゲット不明確（意図的な欠陥②） -->
+    <div class="hero-sub">完全個室 · マンツーマン指導 · 最新マシン完備</div>
+    <div class="hero-desc">
+      プロトレーナーによる科学的アプローチで、<br>
+      あなたの身体づくりを全力でサポートします。
     </div>
 
-    <!-- ダメな点③：CTAが3つあって分かりにくい -->
-    <div class="kv-buttons">
-      <button class="btn-main">無料体験申込</button>
-      <button class="btn-sub">料金を見る</button>
-      <button class="btn-sub2">トレーナー紹介</button>
+    <!-- 情報過多（意図的な欠陥④） -->
+    <div class="badges">
+      <span class="bdg">完全個室</span>
+      <span class="bdg">マンツーマン指導</span>
+      <span class="bdg">食事管理サポート</span>
+      <span class="bdg">最新マシン完備</span>
+      <span class="bdg">月額9,800円〜</span>
+      <span class="bdg">駅徒歩3分</span>
+      <span class="bdg">無料体験あり</span>
+    </div>
+
+    <!-- CTAが3つ（意図的な欠陥③） -->
+    <div class="cta-group">
+      <a href="#" class="btn-white">無料体験に申し込む</a>
+      <a href="#" class="btn-outline">料金プランを見る</a>
+      <div class="btn-text">トレーナー紹介はこちら →</div>
     </div>
   </div>
 
-  <!-- 右側画像エリア -->
-  <div class="kv-image">
-    <div class="kv-image-bg">
-      <!-- 人物シルエット（SVG） -->
-      <div class="silhouette">
-        <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
-          <!-- 頭 -->
-          <ellipse cx="100" cy="45" rx="28" ry="32" fill="#c9a227" opacity="0.6"/>
-          <!-- 首 -->
-          <rect x="88" y="72" width="24" height="20" fill="#c9a227" opacity="0.6"/>
-          <!-- 肩・胴体 -->
-          <path d="M40 95 Q60 85 100 90 Q140 85 160 95 L155 200 Q130 210 100 212 Q70 210 45 200 Z" fill="#c9a227" opacity="0.5"/>
-          <!-- 左腕 -->
-          <path d="M45 100 Q20 130 25 180 Q30 200 45 195 Q55 175 55 145 L60 110 Z" fill="#c9a227" opacity="0.5"/>
-          <!-- 右腕 -->
-          <path d="M155 100 Q180 130 175 180 Q170 200 155 195 Q145 175 145 145 L140 110 Z" fill="#c9a227" opacity="0.5"/>
-          <!-- 腰・脚 -->
-          <path d="M50 200 Q70 210 100 212 Q130 210 150 200 L145 260 Q130 265 115 264 L110 340 Q105 360 100 360 Q95 360 90 340 L85 264 Q70 265 55 260 Z" fill="#c9a227" opacity="0.45"/>
-          <!-- グラデーションオーバーレイ -->
-          <defs>
-            <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#c9a227" stop-opacity="0.2"/>
-              <stop offset="100%" stop-color="#c9a227" stop-opacity="0.05"/>
-            </linearGradient>
-          </defs>
-          <rect x="0" y="0" width="200" height="400" fill="url(#fade)"/>
-        </svg>
+  <!-- Right panel -->
+  <div class="right-panel">
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-icon">💪</div>
+        <div class="feature-text">業界最安値水準の月額料金</div>
       </div>
-
-      <!-- バッジエリア（情報過多） -->
-      <div class="badge-area">
-        <div class="badge">会員数500名突破</div>
-        <div class="badge">満足度98%</div>
-        <div class="badge">創業10年</div>
-        <div class="badge">名古屋No.1</div>
+      <div class="feature-item">
+        <div class="feature-icon">🏠</div>
+        <div class="feature-text">完全個室でプライベートな空間</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🥗</div>
+        <div class="feature-text">食事管理・栄養指導も対応</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📍</div>
+        <div class="feature-text">名古屋市中心部・駅徒歩3分</div>
       </div>
     </div>
   </div>
 
-  <!-- ダメな点④：情報過多タグ -->
-  <div class="info-overflow">
-    <div class="info-tag">体験当日入会で初月50%OFF</div>
-    <div class="info-tag">駅徒歩3分</div>
-    <div class="info-tag">年中無休</div>
-    <div class="info-tag">女性専用時間帯あり</div>
-    <div class="info-tag">学生割引10%</div>
+  <!-- Stats bar -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-n">98%</div>
+      <div class="stat-l">顧客満足度</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">500+</div>
+      <div class="stat-l">累計会員数</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">5年</div>
+      <div class="stat-l">平均指導経験</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">¥9,800〜</div>
+      <div class="stat-l">月額料金</div>
+    </div>
   </div>
-
 </div>
-
 </body>
 </html>
