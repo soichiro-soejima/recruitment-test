@@ -877,13 +877,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // ===== KEYBOARD =====
-document.addEventListener('keydown', e => {
-  if (S.screen !== 'test' || S.timedOut) return;
-  if (QS[S.qIdx].type === 'text') return; // 自由記述中はショートカット無効
-  const map = { '1':0, '2':1, '3':2, '4':3, 'a':0, 'b':1, 'c':2, 'd':3 };
-  if (map[e.key] !== undefined) selectOpt(map[e.key]);
-  if (e.key === 'Enter') nextQ();
-});
+// キーボードショートカットは無効（クリックのみで送信）
 
 // Password screen enter key
 document.addEventListener('keydown', e => {
