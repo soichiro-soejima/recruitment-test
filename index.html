@@ -125,20 +125,20 @@
     .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
     .progress-fill { height: 100%; background: var(--gradient); border-radius: 2px; transition: width 0.4s ease; }
 
-    /* Timer SVG */
-    .timer-svg { width: 60px; height: 60px; flex-shrink: 0; }
-    .timer-bg { fill: none; stroke: var(--border); stroke-width: 6; }
-    .timer-ring {
-      fill: none; stroke: var(--blue); stroke-width: 6;
-      stroke-linecap: round;
-      transform: rotate(-90deg); transform-origin: 50% 50%;
-      transition: stroke-dashoffset 0.95s linear, stroke 0.3s;
+    /* Timer */
+    .timer-box {
+      flex-shrink: 0;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.15rem;
     }
-    .timer-ring.warn { stroke: var(--warning); }
-    .timer-ring.danger { stroke: var(--danger); }
-    .timer-num { fill: var(--text); font-family: var(--font-en); font-size: 20px; font-weight: 500; text-anchor: middle; dominant-baseline: central; }
-    .timer-num.warn { fill: var(--warning); }
-    .timer-num.danger { fill: var(--danger); }
+    .timer-label { font-size: 0.6rem; color: var(--text-sub); letter-spacing: 0.06em; }
+    .timer-display {
+      font-family: var(--font-en); font-size: 1.5rem; font-weight: 500;
+      color: var(--text); letter-spacing: 0.04em; min-width: 4ch; text-align: center;
+      transition: color 0.3s;
+    }
+    .timer-display.warn { color: var(--warning); }
+    .timer-display.danger { color: var(--danger); }
 
     /* ===== QUESTION ===== */
     .test-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; }
@@ -412,12 +412,10 @@
         <div class="progress-fill" id="prog-fill" style="width:0%"></div>
       </div>
     </div>
-    <svg class="timer-svg" viewBox="0 0 100 100">
-      <circle class="timer-bg" cx="50" cy="50" r="42"/>
-      <circle class="timer-ring" id="timer-ring" cx="50" cy="50" r="42"
-        stroke-dasharray="263.9" stroke-dashoffset="0"/>
-      <text class="timer-num" id="timer-num" x="50" y="55">60</text>
-    </svg>
+    <div class="timer-box">
+      <div class="timer-label">残り時間</div>
+      <div class="timer-display" id="timer-display">5:00</div>
+    </div>
   </div>
   <div class="test-content">
     <div class="question-card fade-in" id="q-card">
@@ -515,7 +513,6 @@ const S = {
   tabSwitches: 0,
   timedOut: false,
 };
-const CIRC = 263.9;
 const LABELS = ['A','B','C','D'];
 const CATS = ['行動特性','文章力'];
 
@@ -566,14 +563,13 @@ function tick() {
 }
 function drawTimer() {
   const t = S.timeLeft;
-  const ring = document.getElementById('timer-ring');
-  const num = document.getElementById('timer-num');
-  if (!ring) return;
-  ring.style.strokeDashoffset = CIRC * (1 - t / 300);
-  num.textContent = t;
+  const el = document.getElementById('timer-display');
+  if (!el) return;
+  const m = Math.floor(t / 60);
+  const s = t % 60;
+  el.textContent = m + ':' + String(s).padStart(2, '0');
   const cls = t <= 60 ? 'danger' : t <= 120 ? 'warn' : '';
-  ring.className = 'timer-ring' + (cls ? ' ' + cls : '');
-  num.className = 'timer-num' + (cls ? ' ' + cls : '');
+  el.className = 'timer-display' + (cls ? ' ' + cls : '');
 }
 
 // ===== TIMEOUT =====
