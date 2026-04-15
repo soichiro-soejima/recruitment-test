@@ -913,11 +913,12 @@ function initRoute() {
           headers: SB_HEADERS,
           body: JSON.stringify({
             name: p.name, email: p.email, date: p.date,
+            score_language: 0, score_math: 0, score_geometry: 0, score_logic: 0, total: 0,
             tab_switches: p.tabSwitches,
             answers: answersDetail,
           }),
         });
-      } catch(e) {}
+      } catch(e) { console.error('途中データ送信失敗', e); }
     }
     sessionStorage.removeItem('am_test_in_progress');
     sessionStorage.removeItem('am_test_progress');
