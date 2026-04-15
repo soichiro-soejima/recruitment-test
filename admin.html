@@ -237,8 +237,7 @@
         <thead>
           <tr>
             <th>氏名</th><th>メール</th><th>受験日時</th>
-            <th>行動特性</th><th>文章力</th>
-            <th>合計</th><th>タブ切替</th><th>詳細</th><th>削除</th>
+            <th>タブ切替</th><th>詳細</th><th>削除</th>
           </tr>
         </thead>
         <tbody id="dash-tbody"></tbody>
@@ -259,7 +258,6 @@
 </div>
 
 <script>
-const CATS = ['行動特性','文章力'];
 const SB_URL = 'https://swctifktqmrdvbinybgk.supabase.co';
 const SB_KEY = 'sb_publishable_kOoqHI0ni3sjD_WKi6HfcQ_F1HntHq4';
 const SB_HEADERS = {
@@ -287,32 +285,26 @@ async function loadResults() {
 
 async function renderDash() {
   const results = await loadResults();
-  const avg = results.length ? (results.reduce((a,r) => a + r.total, 0) / results.length).toFixed(1) : '—';
-  const max = results.length ? Math.max(...results.map(r => r.total)) : '—';
-  const min = results.length ? Math.min(...results.map(r => r.total)) : '—';
+  const tabAvg = results.length ? (results.reduce((a,r) => a + r.tab_switches, 0) / results.length).toFixed(1) : '—';
 
   document.getElementById('dash-stats').innerHTML = `
     <div class="stat-card"><div class="stat-label">受験者数</div><div class="stat-val">${results.length}</div></div>
-    <div class="stat-card"><div class="stat-label">平均スコア</div><div class="stat-val">${avg}</div></div>
-    <div class="stat-card"><div class="stat-label">最高スコア</div><div class="stat-val">${max}</div></div>
-    <div class="stat-card"><div class="stat-label">最低スコア</div><div class="stat-val">${min}</div></div>`;
+    <div class="stat-card"><div class="stat-label">タブ切替あり</div><div class="stat-val">${results.filter(r => r.tab_switches > 0).length}</div></div>
+    <div class="stat-card"><div class="stat-label">平均タブ切替</div><div class="stat-val">${tabAvg}</div></div>`;
 
   const tbody = document.getElementById('dash-tbody');
   if (!results.length) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><div>まだ受験データがありません</div></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><div>まだ受験データがありません</div></div></td></tr>`;
     return;
   }
   tbody.innerHTML = results.map((r, idx) => `
     <tr>
       <td>${r.name}</td>
-      <td style="color:var(--gray-400)">${r.email}</td>
-      <td style="color:var(--gray-600);font-family:var(--font-mono);font-size:0.78rem">${r.date}</td>
-      <td class="mono" style="color:#a5b4fc">${r.score_language}/3</td>
-      <td class="mono" style="color:#fcd34d">${r.score_math}/2</td>
-      <td class="mono score-total">${r.total}/7</td>
-      <td>${r.tab_switches > 0 ? `<span class="tab-badge">⚠ ${r.tab_switches}回</span>` : `<span style="color:var(--gray-600)">なし</span>`}</td>
+      <td style="color:var(--text-sub)">${r.email}</td>
+      <td style="color:var(--text-sub);font-size:0.78rem">${r.date}</td>
+      <td>${r.tab_switches > 0 ? `<span class="tab-badge">⚠ ${r.tab_switches}回</span>` : `<span style="color:var(--text-sub)">なし</span>`}</td>
       <td><button class="btn-detail" onclick="showDetail(${idx})">詳細</button></td>
-      <td><button class="btn-detail" style="border-color:rgba(239,68,68,0.3);color:#fca5a5" onclick="deleteOne('${r.id}', '${r.name}')">削除</button></td>
+      <td><button class="btn-detail" style="border-color:rgba(239,68,68,0.3);color:var(--danger)" onclick="deleteOne('${r.id}', '${r.name}')">削除</button></td>
     </tr>`).join('');
   window._results = results;
 }
@@ -334,35 +326,15 @@ function showDetail(idx) {
   if (!answers || !answers.length) {
     document.getElementById('modal-body').innerHTML = '<div style="color:var(--gray-600);padding:1rem">詳細データがありません（古いデータ）</div>';
   } else {
-    document.getElementById('modal-body').innerHTML = answers.map(a => {
-      if (a.type === 'text') {
-        return `
-          <div class="answer-row">
-            <div class="answer-num unanswered" style="font-size:0.65rem;width:32px;height:32px">記述</div>
-            <div class="answer-content">
-              <div class="answer-cat">Q${a.qNum}</div>
-              <div class="answer-text">${a.text.replace(/\n/g,'<br>')}</div>
-              <div class="answer-detail" style="display:block;background:rgba(255,255,255,0.04);border-radius:6px;padding:0.75rem;margin-top:0.5rem;white-space:pre-wrap;line-height:1.7;color:var(--gray-200)">${a.answeredText}</div>
-            </div>
-          </div>`;
-      }
-      const cls = a.isCorrect ? 'correct' : (a.answered === null ? 'unanswered' : 'wrong');
-      const icon = a.isCorrect ? '○' : (a.answered === null ? '－' : '✕');
-      return `
-        <div class="answer-row">
-          <div class="answer-num ${cls}">${icon}</div>
-          <div class="answer-content">
-            <div class="answer-cat">Q${a.qNum}</div>
-            <div class="answer-text">${a.text.replace(/\n/g,'<br>')}</div>
-            <div class="answer-detail">
-              <span class="ans-correct">正解：${a.correctText}</span>
-              <span class="${a.isCorrect ? 'ans-correct' : (a.answered === null ? 'ans-unanswered' : 'ans-wrong')}">
-                回答：${a.answeredText}
-              </span>
-            </div>
-          </div>
-        </div>`;
-    }).join('');
+    document.getElementById('modal-body').innerHTML = answers.map(a => `
+      <div class="answer-row">
+        <div class="answer-num unanswered" style="font-size:0.6rem;width:32px;height:32px;flex-shrink:0">Q${a.qNum}</div>
+        <div class="answer-content">
+          <div class="answer-cat">${a.cat || ''}</div>
+          <div class="answer-text">${(a.text || '').replace(/\n/g,'<br>')}</div>
+          <div style="background:var(--bg-gray);border:1px solid var(--border);border-radius:4px;padding:0.75rem;margin-top:0.5rem;white-space:pre-wrap;line-height:1.8;font-size:0.85rem;color:var(--text)">${a.answeredText || '未回答'}</div>
+        </div>
+      </div>`).join('');
   }
   document.getElementById('modal-overlay').classList.remove('hidden');
 }
@@ -385,8 +357,11 @@ function closeModal(e) {
 async function exportCSV() {
   const results = await loadResults();
   if (!results.length) { alert('データがありません'); return; }
-  const header = ['氏名','メール','受験日時','行動特性','文章力','合計','タブ切替回数'];
-  const rows = results.map(r => [r.name, r.email, r.date, r.score_language, r.score_math, r.total, r.tab_switches]);
+  const header = ['氏名','メール','受験日時','タブ切替回数','Q1','Q2','Q3','Q4','Q5','Q6'];
+  const rows = results.map(r => {
+    const ans = r.answers || [];
+    return [r.name, r.email, r.date, r.tab_switches, ...ans.map(a => a ? a.answeredText || '' : '')];
+  });
   const csv = [header, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);

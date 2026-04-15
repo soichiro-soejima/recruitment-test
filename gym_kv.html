@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BODY MAKE GYM KV</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Noto Sans JP', sans-serif; background: #111; }
+
+    .kv {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      height: 600px;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a1a00 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
+    /* 背景装飾 */
+    .kv::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 50%, rgba(180,120,0,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(180,120,0,0.08) 0%, transparent 50%);
+    }
+
+    /* 左側コンテンツ */
+    .kv-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 60px;
+      flex: 1;
+    }
+
+    .kv-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: #b8860b;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .kv-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 5rem;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .kv-title span {
+      color: #c9a227;
+    }
+
+    .kv-subtitle {
+      font-size: 1.1rem;
+      color: #aaa;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    /* ダメな点①：機能だけ訴求・ターゲット不明 */
+    .kv-features {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #ccc;
+    }
+
+    .feature-dot {
+      width: 6px;
+      height: 6px;
+      background: #c9a227;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ダメな点③：CTAが分かりにくい */
+    .kv-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-main {
+      background: #c9a227;
+      color: #000;
+      border: none;
+      padding: 12px 28px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+    }
+
+    /* CTAが分かりにくい：同じような見た目のボタンが複数 */
+    .btn-sub {
+      background: transparent;
+      color: #c9a227;
+      border: 1px solid #c9a227;
+      padding: 12px 28px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-sub2 {
+      background: transparent;
+      color: #888;
+      border: 1px solid #555;
+      padding: 12px 28px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+    }
+
+    /* 右側：画像エリア */
+    .kv-image {
+      width: 420px;
+      height: 100%;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .kv-image-bg {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(160deg, #1a1a1a, #0d0d0d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 人物シルエット */
+    .silhouette {
+      width: 280px;
+      height: 480px;
+      position: relative;
+    }
+
+    .silhouette svg {
+      width: 100%;
+      height: 100%;
+      opacity: 0.85;
+    }
+
+    /* 右上に情報過多な要素 */
+    .badge-area {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 3;
+    }
+
+    .badge {
+      background: rgba(201,162,39,0.9);
+      color: #000;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    /* ダメな点④：情報過多 */
+    .info-overflow {
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      right: 440px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      z-index: 3;
+    }
+
+    .info-tag {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #999;
+      font-size: 0.62rem;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+
+    /* ロゴ */
+    .logo {
+      position: absolute;
+      top: 24px;
+      left: 60px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      color: #c9a227;
+      letter-spacing: 0.15em;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+
+<div class="kv">
+
+  <div class="logo">BODY MAKE GYM</div>
+
+  <div class="kv-content">
+    <div class="kv-label">Personal Training Gym</div>
+
+    <!-- ダメな点①：機能だけ訴求、ターゲット不明 -->
+    <div class="kv-title">TRAIN<br><span>HARD</span></div>
+    <div class="kv-subtitle">
+      最新マシン完備・専属トレーナー在籍<br>
+      週3回プログラム・栄養指導あり・個室対応可能
+    </div>
+
+    <!-- ダメな点①②：機能の羅列、誰向けか不明 -->
+    <div class="kv-features">
+      <div class="feature-item"><div class="feature-dot"></div>最新トレーニングマシン20種類以上完備</div>
+      <div class="feature-item"><div class="feature-dot"></div>国家資格取得トレーナーによる個別指導</div>
+      <div class="feature-item"><div class="feature-dot"></div>入会金・事務手数料・管理費・施設利用料込み</div>
+      <div class="feature-item"><div class="feature-dot"></div>駐車場完備・シャワールーム・更衣室あり</div>
+      <div class="feature-item"><div class="feature-dot"></div>オンラインフォローアップ対応・アプリ管理</div>
+    </div>
+
+    <!-- ダメな点③：CTAが3つあって分かりにくい -->
+    <div class="kv-buttons">
+      <button class="btn-main">無料体験申込</button>
+      <button class="btn-sub">料金を見る</button>
+      <button class="btn-sub2">トレーナー紹介</button>
+    </div>
+  </div>
+
+  <!-- 右側画像エリア -->
+  <div class="kv-image">
+    <div class="kv-image-bg">
+      <!-- 人物シルエット（SVG） -->
+      <div class="silhouette">
+        <svg viewBox="0 0 200 400" xmlns="http://www.w3.org/2000/svg">
+          <!-- 頭 -->
+          <ellipse cx="100" cy="45" rx="28" ry="32" fill="#c9a227" opacity="0.6"/>
+          <!-- 首 -->
+          <rect x="88" y="72" width="24" height="20" fill="#c9a227" opacity="0.6"/>
+          <!-- 肩・胴体 -->
+          <path d="M40 95 Q60 85 100 90 Q140 85 160 95 L155 200 Q130 210 100 212 Q70 210 45 200 Z" fill="#c9a227" opacity="0.5"/>
+          <!-- 左腕 -->
+          <path d="M45 100 Q20 130 25 180 Q30 200 45 195 Q55 175 55 145 L60 110 Z" fill="#c9a227" opacity="0.5"/>
+          <!-- 右腕 -->
+          <path d="M155 100 Q180 130 175 180 Q170 200 155 195 Q145 175 145 145 L140 110 Z" fill="#c9a227" opacity="0.5"/>
+          <!-- 腰・脚 -->
+          <path d="M50 200 Q70 210 100 212 Q130 210 150 200 L145 260 Q130 265 115 264 L110 340 Q105 360 100 360 Q95 360 90 340 L85 264 Q70 265 55 260 Z" fill="#c9a227" opacity="0.45"/>
+          <!-- グラデーションオーバーレイ -->
+          <defs>
+            <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c9a227" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#c9a227" stop-opacity="0.05"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="200" height="400" fill="url(#fade)"/>
+        </svg>
+      </div>
+
+      <!-- バッジエリア（情報過多） -->
+      <div class="badge-area">
+        <div class="badge">会員数500名突破</div>
+        <div class="badge">満足度98%</div>
+        <div class="badge">創業10年</div>
+        <div class="badge">名古屋No.1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ダメな点④：情報過多タグ -->
+  <div class="info-overflow">
+    <div class="info-tag">体験当日入会で初月50%OFF</div>
+    <div class="info-tag">駅徒歩3分</div>
+    <div class="info-tag">年中無休</div>
+    <div class="info-tag">女性専用時間帯あり</div>
+    <div class="info-tag">学生割引10%</div>
+  </div>
+
+</div>
+
+</body>
+</html>

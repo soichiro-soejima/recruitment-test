@@ -318,6 +318,18 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Q3 data table */
+    .q-table-wrap { margin: 1rem 0; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .q-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .q-table thead th { background: var(--bg-gray); padding: 0.6rem 1rem; text-align: left; font-size: 0.72rem; color: var(--text-sub); font-weight: 500; border-bottom: 1px solid var(--border); }
+    .q-table tbody td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text); }
+    .q-table tbody tr:last-child td { border-bottom: none; }
+    .q-table tbody td:nth-child(2), .q-table tbody td:nth-child(3) { font-family: var(--font-en); font-weight: 600; }
+
+    /* Q4 KV iframe */
+    .kv-frame-wrap { margin: 1rem 0; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; height: 300px; }
+    .kv-frame { width: 1200px; height: 600px; border: none; display: block; transform: scale(0.5); transform-origin: top left; }
+
     @media (max-width: 600px) {
       .landing-card, .results-card { padding: 2rem 1.5rem; }
       .test-header { padding: 0.875rem 1rem; gap: 1rem; }
@@ -339,15 +351,15 @@
       <div class="test-info-grid">
         <div>
           <span class="test-info-label">問題数</span>
-          <span class="test-info-value">5問</span>
+          <span class="test-info-value">6問</span>
         </div>
         <div>
           <span class="test-info-label">制限時間</span>
-          <span class="test-info-value">各2分</span>
+          <span class="test-info-value">各3分</span>
         </div>
         <div>
           <span class="test-info-label">合計</span>
-          <span class="test-info-value">最大10分</span>
+          <span class="test-info-value">最大18分</span>
         </div>
       </div>
     </div>
@@ -455,14 +467,33 @@
 
 <script>
 // ===== QUESTIONS =====
+const TABLE_Q3 = `<div class="q-table-wrap"><table class="q-table"><thead><tr><th>指標</th><th>目標</th><th>現状</th></tr></thead><tbody><tr><td>新規問い合わせ数</td><td>40件</td><td>38件</td></tr><tr><td>商談化率</td><td>50%</td><td>21%</td></tr><tr><td>新規商談数</td><td>20件</td><td>8件</td></tr><tr><td>成約率</td><td>50%</td><td>37.5%</td></tr><tr><td>成約数</td><td>10件</td><td>3件</td></tr></tbody></table></div>`;
+
 const QS = [
-  // 行動特性
-  { cat:'行動特性', text:'上司から「A社向けの提案書を木曜17時までに、○○のフォーマットで送ってください」と指示された。作業中に「このフォーマットより自分が知っている別の形式の方が見やすい」と気づいた。どうする？', opts:['自分が見やすいと思う形式で作成して送る','指定フォーマットで作成し、送付後に「別の形式も良いかもしれません」と提案する','上司に別の形式の方が見やすいと提案し、どちらが良いか判断を仰ぐ','上司に確認せず、途中で形式を変えて作業を進める'], ans:2 },
-  { cat:'行動特性', text:'締切が今日17時のタスクが、14時時点でまだ半分しか終わっていない。このまま進めても間に合わない可能性が高い。どうする？', opts:['全力でやって、遅れたとしても仕方ないと割り切る','17時に「作業中です。もう少し時間をください」と連絡する','すぐに上司に状況を報告し、優先順位や対応方法を相談する','残業すれば間に合うかもしれないので、黙って作業を続ける'], ans:2 },
-{ cat:'行動特性', text:'同時に3つのタスクを抱えている。①クライアントA社の急ぎのレポート（今日中）、②来週締切の提案書、③社内の定例会議の資料（明後日）。どの順で取り組む？', opts:['来週締切の提案書から着手する（時間がかかるから）','定例会議の資料から着手する（みんなに関わるから）','今日中のレポートを最優先に着手し、残りは締切順に対応する','上司に全部報告して、順番を決めてもらう'], ans:2 },
-  // 文章力（自由記述）
-  { cat:'文章力', type:'text', text:'上司に相談する時に、気を付けているポイントを3つ教えてください。' },
-  { cat:'文章力', type:'text', text:'以下のメールの件名の良くない点を指摘してください。\n（※○○にはクライアント名が入ります）\n\n件名：議事録送付 ○○様' },
+  {
+    cat: 'フェルミ推定', type: 'text',
+    text: '名古屋市内にある美容室の数を推定してください。\n計算の過程や考え方も含めて書いてください。'
+  },
+  {
+    cat: '課題分析', type: 'text',
+    text: 'あなたはWeb広告代理店の営業担当です。以下の状況を読んで、考えられる原因と、改善策を立てるためにヒアリングしたい内容を書いてください。\n\n【状況】\n新規クライアントへの営業活動を行っているが、3ヶ月連続で新規契約数が目標を下回っている。営業担当全員が週10件ペースで新規架電をしており、初回アポ獲得率は目標通り推移している。しかし、提案後の成約率が大きく落ちている。'
+  },
+  {
+    cat: '数値への感度', type: 'text', tableHtml: TABLE_Q3,
+    text: '以下は、アノマリーマーケティングの今月の営業数値（目標 vs 現状）です。\nこの数値を見て気づいたことと、改善策を立てるためにヒアリングしたい内容を書いてください。'
+  },
+  {
+    cat: 'ユーザー視点', type: 'text', kvEmbed: true,
+    text: '以下は、パーソナルジム「BODY MAKE GYM」のWebサイトのトップページ（メインビジュアル）です。\n\n【ジムの前提情報】\n・ターゲット：30〜40代の働く男女\n・立地：名古屋市中心部・駅徒歩3分\n・特徴：完全個室・マンツーマン指導\n・強み：業界最安値水準（月額9,800円〜）\n・目的：まずは無料体験の申込数を増やしたい\n\nこのデザインの問題点と、その改善案を具体的に書いてください。（複数可）'
+  },
+  {
+    cat: '文章力', type: 'text',
+    text: 'あなたは広告代理店の営業担当者です。新規クライアントとの契約が決まり、プロジェクト開始に向けたキックオフミーティングを設定したいと考えています。\n\nクライアント担当者へ、日程調整のメールを書いてください。\n\n【条件】\n・クライアントの会社名・担当者名・業種など、前提情報は自由に設定して構いません\n・件名も含めて書いてください'
+  },
+  {
+    cat: '仕事観', type: 'text',
+    text: '上司に仕事の相談をする際、あなたが気をつけていること（または気をつけたいと思うこと）を3つ挙げてください。'
+  },
 ];
 
 // ===== STATE =====
@@ -504,7 +535,7 @@ function startTest() {
   if (!name || !email) { alert('お名前とメールアドレスを入力してください'); return; }
   if (!email.includes('@')) { alert('有効なメールアドレスを入力してください'); return; }
   S.name = name; S.email = email;
-  S.qIdx = 0; S.answers = new Array(7).fill(null);
+  S.qIdx = 0; S.answers = new Array(6).fill(null);
   S.tabSwitches = 0; S.selected = null;
   showScreen('test');
   renderQ();
@@ -514,7 +545,7 @@ function startTest() {
 // ===== TIMER =====
 function startTimer() {
   stopTimer();
-  S.timeLeft = 120; S.timedOut = false;
+  S.timeLeft = 180; S.timedOut = false;
   drawTimer();
   S.timerID = setInterval(tick, 1000);
 }
@@ -531,9 +562,9 @@ function drawTimer() {
   const ring = document.getElementById('timer-ring');
   const num = document.getElementById('timer-num');
   if (!ring) return;
-  ring.style.strokeDashoffset = CIRC * (1 - t / 120);
+  ring.style.strokeDashoffset = CIRC * (1 - t / 180);
   num.textContent = t;
-  const cls = t <= 20 ? 'danger' : t <= 40 ? 'warn' : '';
+  const cls = t <= 30 ? 'danger' : t <= 60 ? 'warn' : '';
   ring.className = 'timer-ring' + (cls ? ' ' + cls : '');
   num.className = 'timer-num' + (cls ? ' ' + cls : '');
 }
@@ -562,34 +593,25 @@ function renderQ() {
   const ov = card.querySelector('.timeout-overlay');
   if (ov) ov.remove();
 
-  // カテゴリバッジは受験者には表示しない
-  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 5';
-  document.getElementById('prog-fill').style.width = (S.qIdx / 5 * 100) + '%';
+  document.getElementById('prog-count').textContent = (S.qIdx + 1) + ' / 6';
+  document.getElementById('prog-fill').style.width = (S.qIdx / 6 * 100) + '%';
   document.getElementById('q-meta').textContent = '問題 ' + (S.qIdx + 1);
   document.getElementById('q-text').innerHTML = q.text.replace(/\n/g, '<br>');
 
   const grid = document.getElementById('opts');
-  grid.innerHTML = '';
-  if (q.type === 'text') {
-    grid.innerHTML = `
-      <div class="free-text-label">自由記述</div>
-      <textarea id="free-text-ans" class="free-text-area" placeholder="こちらに回答を入力してください"></textarea>`;
-    document.getElementById('free-text-ans').addEventListener('input', e => {
-      document.getElementById('btn-next').disabled = e.target.value.trim() === '';
-    });
-  } else {
-    q.opts.forEach((opt, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'option-btn';
-      btn.innerHTML = `<span class="opt-label">${LABELS[i]}</span><span>${opt}</span>`;
-      btn.onclick = () => selectOpt(i);
-      grid.appendChild(btn);
-    });
-  }
+  let extra = '';
+  if (q.tableHtml) extra = q.tableHtml;
+  if (q.kvEmbed) extra = `<div class="kv-frame-wrap"><iframe src="gym_kv.html" class="kv-frame" scrolling="no"></iframe></div>`;
+  grid.innerHTML = extra + `
+    <div class="free-text-label" style="${extra ? 'margin-top:1.25rem' : ''}">自由記述</div>
+    <textarea id="free-text-ans" class="free-text-area" placeholder="こちらに回答を入力してください"></textarea>`;
+  document.getElementById('free-text-ans').addEventListener('input', e => {
+    document.getElementById('btn-next').disabled = e.target.value.trim() === '';
+  });
 
   const nextBtn = document.getElementById('btn-next');
-  nextBtn.textContent = S.qIdx < 4 ? '次の問題 →' : '結果を見る';
-  nextBtn.disabled = true; // 回答するまで進めない
+  nextBtn.textContent = S.qIdx < 5 ? '次の問題 →' : '結果を見る';
+  nextBtn.disabled = true;
 
   card.classList.remove('fade-in');
   void card.offsetWidth;
@@ -615,41 +637,29 @@ function nextQ() {
   } else {
     S.answers[S.qIdx] = S.selected;
   }
-  if (S.qIdx >= 4) { finishTest(); return; }
+  if (S.qIdx >= 5) { finishTest(); return; }
   S.qIdx++;
   renderQ();
   startTimer();
 }
 
 function finishTest() {
-  const scores = {};
-  CATS.forEach(c => scores[c] = 0);
-  QS.forEach((q, i) => { if (q.type !== 'text' && S.answers[i] === q.ans) scores[q.cat]++; });
-  const total = scores['行動特性']; // 自由記述は採点対象外
-  const answersDetail = QS.map((q, i) => {
-    if (q.type === 'text') {
-      return { qNum: i + 1, cat: q.cat, text: q.text, type: 'text', answeredText: S.answers[i] || '未回答' };
-    }
-    return {
-      qNum: i + 1, cat: q.cat, text: q.text,
-      correct: q.ans, answered: S.answers[i],
-      isCorrect: S.answers[i] === q.ans,
-      correctText: q.opts[q.ans],
-      answeredText: S.answers[i] !== null ? q.opts[S.answers[i]] : '未回答',
-    };
-  });
+  const answersDetail = QS.map((q, i) => ({
+    qNum: i + 1, cat: q.cat, type: 'text',
+    text: q.text, answeredText: S.answers[i] || '未回答',
+  }));
   const result = {
     name: S.name, email: S.email,
     date: new Date().toLocaleString('ja-JP'),
-    scores, total, tabSwitches: S.tabSwitches,
+    tabSwitches: S.tabSwitches,
     answers: answersDetail,
   };
   saveResult(result);
-  showResults(scores, total);
+  showResults();
 }
 
 // ===== RESULTS =====
-function showResults(scores, total) {
+function showResults() {
   showScreen('results');
 }
 
@@ -706,11 +716,11 @@ async function saveResult(r) {
         name: r.name,
         email: r.email,
         date: r.date,
-        score_language: r.scores['行動特性'],
-        score_math: r.scores['文章力'],
+        score_language: 0,
+        score_math: 0,
         score_geometry: 0,
         score_logic: 0,
-        total: r.total,
+        total: 0,
         tab_switches: r.tabSwitches,
         answers: r.answers,
       }),
