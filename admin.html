@@ -308,15 +308,22 @@ function showDetail(idx) {
   if (!answers || !answers.length) {
     document.getElementById('modal-body').innerHTML = '<div style="color:var(--gray-600);padding:1rem">詳細データがありません（古いデータ）</div>';
   } else {
-    document.getElementById('modal-body').innerHTML = answers.map(a => `
+    document.getElementById('modal-body').innerHTML = answers.map(a => {
+      const t = a.timeTaken;
+      const timeLabel = t != null ? `${Math.floor(t/60)}分${t%60}秒` : '—';
+      return `
       <div class="answer-row">
         <div class="answer-num unanswered" style="font-size:0.6rem;width:32px;height:32px;flex-shrink:0">Q${a.qNum}</div>
         <div class="answer-content">
-          <div class="answer-cat">${a.cat || ''}</div>
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.2rem">
+            <div class="answer-cat" style="margin-bottom:0">${a.cat || ''}</div>
+            <div style="font-size:0.65rem;color:var(--text-sub);background:var(--bg-gray);border:1px solid var(--border);border-radius:3px;padding:0.1rem 0.4rem">⏱ ${timeLabel}</div>
+          </div>
           <div class="answer-text">${(a.text || '').replace(/\n/g,'<br>')}</div>
           <div style="background:var(--bg-gray);border:1px solid var(--border);border-radius:4px;padding:0.75rem;margin-top:0.5rem;white-space:pre-wrap;line-height:1.8;font-size:0.85rem;color:var(--text)">${a.answeredText || '未回答'}</div>
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
   document.getElementById('modal-overlay').classList.remove('hidden');
 }

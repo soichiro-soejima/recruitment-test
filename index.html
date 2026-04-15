@@ -537,6 +537,8 @@ const S = {
   name: '', email: '',
   qIdx: 0,
   answers: new Array(20).fill(null),
+  timeTaken: new Array(5).fill(null),
+  qStartTime: null,
   selected: null,
   timeLeft: 60,
   timerID: null,
@@ -576,18 +578,25 @@ async function startTest() {
   if (!name || !email) { alert('お名前とメールアドレスを入力してください'); return; }
   if (!email.includes('@')) { alert('有効なメールアドレスを入力してください'); return; }
 
-  // Supabase重複チェック
-  try {
-    const res = await fetch(SB_URL + '/rest/v1/recruitment_results?email=eq.' + encodeURIComponent(email) + '&select=id', { headers: SB_HEADERS });
-    const rows = await res.json();
-    if (rows && rows.length > 0) {
-      showBlocked('受験済みです', 'このメールアドレスはすでに受験済みです。<br>ご不明な点は担当者にお問い合わせください。');
-      return;
-    }
-  } catch(e) { /* ネットワークエラーは無視して続行 */ }
+  // 管理者アカウントは制限をスキップ
+  const isAdmin = email === 'soejima@anomaly-marketing.co.jp';
+  if (isAdmin) { sessionStorage.removeItem('am_test_in_progress'); sessionStorage.removeItem('am_test_done'); }
+
+  // Supabase重複チェック（管理者はスキップ）
+  if (!isAdmin) {
+    try {
+      const res = await fetch(SB_URL + '/rest/v1/recruitment_results?email=eq.' + encodeURIComponent(email) + '&select=id', { headers: SB_HEADERS });
+      const rows = await res.json();
+      if (rows && rows.length > 0) {
+        showBlocked('受験済みです', 'このメールアドレスはすでに受験済みです。<br>ご不明な点は担当者にお問い合わせください。');
+        return;
+      }
+    } catch(e) { /* ネットワークエラーは無視して続行 */ }
+  }
 
   S.name = name; S.email = email;
   S.qIdx = 0; S.answers = new Array(5).fill(null);
+  S.timeTaken = new Array(5).fill(null);
   S.tabSwitches = 0; S.selected = null;
 
   // sessionStorageに進行中フラグと初期状態を保存
@@ -655,6 +664,7 @@ function onTimeout() {
 function renderQ() {
   const q = QS[S.qIdx];
   S.selected = null; S.timedOut = false;
+  S.qStartTime = Date.now();
   const card = document.getElementById('q-card');
   const ov = card.querySelector('.timeout-overlay');
   if (ov) ov.remove();
@@ -711,6 +721,7 @@ function selectOpt(i) {
 // ===== NAVIGATION =====
 function nextQ() {
   stopTimer();
+  S.timeTaken[S.qIdx] = S.qStartTime ? Math.round((Date.now() - S.qStartTime) / 1000) : null;
   const q = QS[S.qIdx];
   const prefix = S.timedOut ? '[時間切れ] ' : '';
   if (q.type === 'mail') {
@@ -738,6 +749,7 @@ function finishTest() {
   const answersDetail = QS.map((q, i) => ({
     qNum: i + 1, cat: q.cat, type: 'text',
     text: q.text, answeredText: S.answers[i] || '未回答',
+    timeTaken: S.timeTaken[i],
   }));
   const result = {
     name: S.name, email: S.email,
@@ -891,6 +903,9 @@ function initRoute() {
     showScreen('password');
     return;
   }
+  // 管理者は常にランディングに戻す
+  // ※ startTest()内でsessionStorageをクリアするためここでは不要
+
   // 提出完了済みにもかかわらず再アクセスした場合
   if (sessionStorage.getItem('am_test_done')) {
     showBlocked('受験完了済みです', 'すでにテストを提出済みです。<br>ご不明な点は担当者にお問い合わせください。');
