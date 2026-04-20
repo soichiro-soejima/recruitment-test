@@ -320,16 +320,19 @@ function showDetail(idx) {
     document.getElementById('modal-body').innerHTML = answers.map(a => {
       const t = a.timeTaken;
       const timeLabel = t != null ? `${Math.floor(t/60)}分${t%60}秒` : '—';
+      const isTimeout = a.answeredText && a.answeredText.startsWith('[時間切れ]');
+      const displayText = isTimeout ? a.answeredText.replace('[時間切れ] ', '').replace('[時間切れ]', '') : (a.answeredText || '未回答');
       return `
       <div class="answer-row">
         <div class="answer-num unanswered" style="font-size:0.6rem;width:32px;height:32px;flex-shrink:0">Q${a.qNum}</div>
         <div class="answer-content">
-          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.2rem">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;flex-wrap:wrap">
             <div class="answer-cat" style="margin-bottom:0">${a.cat || ''}</div>
             <div style="font-size:0.65rem;color:var(--text-sub);background:var(--bg-gray);border:1px solid var(--border);border-radius:3px;padding:0.1rem 0.4rem">⏱ ${timeLabel}</div>
+            ${isTimeout ? `<div style="font-size:0.65rem;color:#fff;background:var(--danger);border-radius:3px;padding:0.1rem 0.5rem;font-weight:700">時間切れ</div>` : ''}
           </div>
           <div class="answer-text">${(a.text || '').replace(/\n/g,'<br>')}</div>
-          <div style="background:var(--bg-gray);border:1px solid var(--border);border-radius:4px;padding:0.75rem;margin-top:0.5rem;white-space:pre-wrap;line-height:1.8;font-size:0.85rem;color:var(--text)">${a.answeredText || '未回答'}</div>
+          <div style="background:var(--bg-gray);border:1px solid var(--border);border-radius:4px;padding:0.75rem;margin-top:0.5rem;white-space:pre-wrap;line-height:1.8;font-size:0.85rem;color:var(--text)">${displayText}</div>
         </div>
       </div>`;
     }).join('');
