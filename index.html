@@ -389,7 +389,7 @@
         </div>
         <div>
           <span class="test-info-label">制限時間</span>
-          <span class="test-info-value">各5分</span>
+          <span class="test-info-value">各6分</span>
         </div>
       </div>
     </div>
@@ -405,7 +405,7 @@
       <div style="font-weight:700;margin-bottom:0.3rem;color:#5a3a10;">受験上の注意</div>
       <div>・<strong>パソコンでの受験</strong>を推奨します。スマートフォンは使用しないでください。</div>
       <div>・テスト中は<strong>タブの切り替えを禁止</strong>します。切り替えはシステム側で検知されます。</div>
-      <div>・各問題には5分の制限時間があります。時間切れで次の問題に自動移動します。</div>
+      <div>・各問題には6分の制限時間があります。時間切れで次の問題に自動移動します。</div>
       <div>・テスト中に<strong>ページを更新すると受験が無効</strong>になります。再受験はできません。</div>
       <div>・同じメールアドレスでの<strong>二重受験は不可</strong>です。</div>
     </div>
@@ -621,7 +621,7 @@ function saveProgress() {
 // ===== TIMER =====
 function startTimer() {
   stopTimer();
-  S.timeLeft = 300; S.timedOut = false;
+  S.timeLeft = 360; S.timedOut = false;
   drawTimer();
   S.timerID = setInterval(tick, 1000);
 }
