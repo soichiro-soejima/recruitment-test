@@ -195,6 +195,26 @@
     .ans-wrong { color: var(--danger); }
     .ans-unanswered { color: var(--text-sub); }
 
+    /* TABS */
+    .tab-nav {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; gap: 0;
+    }
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--text-sub); cursor: pointer;
+      border: none; background: none;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-jp);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--blue); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
@@ -212,23 +232,55 @@
     <div class="dash-title">
       採用テスト管理 <span class="dash-badge">Admin</span>
     </div>
-    <div class="dash-actions">
+    <div class="dash-actions" id="header-actions-am">
       <button class="btn-outline" onclick="exportCSV()">CSVエクスポート</button>
       <button class="btn-outline btn-red" onclick="clearData()">データ削除</button>
     </div>
+    <div class="dash-actions" id="header-actions-spi" style="display:none">
+      <button class="btn-outline" onclick="exportSpiCSV()">CSVエクスポート</button>
+      <button class="btn-outline btn-red" onclick="clearSpiData()">データ削除</button>
+    </div>
   </div>
-  <div class="dash-body">
-    <div class="dash-stats" id="dash-stats"></div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>氏名</th><th>メール</th><th>受験日時</th>
-            <th>タブ切替</th><th>詳細</th><th>削除</th>
-          </tr>
-        </thead>
-        <tbody id="dash-tbody"></tbody>
-      </table>
+
+  <!-- タブ -->
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tab-am" onclick="switchTab('am')">AM検定</button>
+    <button class="tab-btn" id="tab-spi" onclick="switchTab('spi')">SPI適性チェック</button>
+  </div>
+
+  <!-- AM検定タブ -->
+  <div class="tab-content active" id="content-am">
+    <div class="dash-body">
+      <div class="dash-stats" id="dash-stats"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>氏名</th><th>メール</th><th>受験日時</th>
+              <th>タブ切替</th><th>詳細</th><th>削除</th>
+            </tr>
+          </thead>
+          <tbody id="dash-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPI適性チェックタブ -->
+  <div class="tab-content" id="content-spi">
+    <div class="dash-body">
+      <div class="dash-stats" id="spi-stats"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>氏名</th><th>メール</th><th>受験日時</th>
+              <th>スコア</th><th>詳細</th><th>削除</th>
+            </tr>
+          </thead>
+          <tbody id="spi-tbody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -255,8 +307,18 @@ const SB_HEADERS = {
 function checkPw() {
   document.getElementById('screen-dash').classList.add('active');
   renderDash();
+  renderSpiDash();
 }
 checkPw();
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('content-' + tab).classList.add('active');
+  document.getElementById('header-actions-am').style.display = tab === 'am' ? '' : 'none';
+  document.getElementById('header-actions-spi').style.display = tab === 'spi' ? '' : 'none';
+}
 
 async function loadResults() {
   try {
@@ -353,6 +415,115 @@ function closeModal(e) {
   if (e.target === document.getElementById('modal-overlay')) {
     document.getElementById('modal-overlay').classList.add('hidden');
   }
+}
+
+// ===== SPI =====
+async function loadSpiResults() {
+  try {
+    const res = await fetch(SB_URL + '/rest/v1/spi_results?order=created_at.desc', { headers: SB_HEADERS });
+    return await res.json();
+  } catch { return []; }
+}
+
+async function renderSpiDash() {
+  const results = await loadSpiResults();
+
+  // Stats
+  const count = results.length;
+  const avgPct = count ? Math.round(results.reduce((s, r) => s + (r.percentage || 0), 0) / count) : 0;
+
+  // カテゴリ別正答率
+  const catStats = {};
+  results.forEach(r => {
+    (r.answers_detail || []).forEach(a => {
+      if (!catStats[a.category]) catStats[a.category] = { correct: 0, total: 0 };
+      catStats[a.category].total++;
+      if (a.is_correct) catStats[a.category].correct++;
+    });
+  });
+
+  document.getElementById('spi-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">受験者数</div><div class="stat-val">${count}</div></div>
+    <div class="stat-card"><div class="stat-label">平均スコア</div><div class="stat-val">${avgPct}%</div></div>
+    ${Object.entries(catStats).map(([cat, v]) => {
+      const p = Math.round(v.correct / v.total * 100);
+      return `<div class="stat-card"><div class="stat-label">${cat} 正答率</div><div class="stat-val" style="font-size:1.2rem">${p}%</div></div>`;
+    }).join('')}`;
+
+  const tbody = document.getElementById('spi-tbody');
+  if (!count) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">📋</div><div>まだ受験データがありません</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = results.map((r, idx) => `
+    <tr>
+      <td>${r.name}</td>
+      <td style="color:var(--text-sub)">${r.email}</td>
+      <td style="color:var(--text-sub);font-size:0.78rem">${new Date(r.created_at).toLocaleString('ja-JP')}</td>
+      <td><span class="score-total">${r.score}/${r.total}</span> <span style="color:var(--text-sub);font-size:0.78rem">(${r.percentage}%)</span></td>
+      <td><button class="btn-detail" onclick="showSpiDetail(${idx})">詳細</button></td>
+      <td><button class="btn-detail" style="border-color:rgba(239,68,68,0.3);color:var(--danger)" onclick="deleteSpiOne('${r.id}', '${r.name}')">削除</button></td>
+    </tr>`).join('');
+  window._spiResults = results;
+}
+
+function showSpiDetail(idx) {
+  const r = window._spiResults[idx];
+  document.getElementById('modal-title').textContent = r.name + ' さん ― SPI適性チェック詳細';
+  const detail = r.answers_detail || [];
+  document.getElementById('modal-body').innerHTML = `
+    <div style="margin-bottom:1rem;padding:0.75rem;background:var(--bg-gray);border:1px solid var(--border);border-radius:4px;display:flex;gap:1.5rem;font-size:0.82rem">
+      <span>スコア: <strong>${r.score}/${r.total}問</strong></span>
+      <span>正答率: <strong>${r.percentage}%</strong></span>
+    </div>
+    ${detail.map((a, i) => {
+      const cls = a.is_correct ? 'correct' : (a.selected === '未回答' ? 'unanswered' : 'wrong');
+      const icon = a.is_correct ? '○' : (a.selected === '未回答' ? '—' : '✕');
+      return `<div class="answer-row">
+        <div class="answer-num ${cls}">${icon}</div>
+        <div class="answer-content">
+          <div class="answer-cat">${a.category} ― 問${i+1}</div>
+          <div class="answer-text">${a.question}…</div>
+          <div class="answer-detail">
+            <span class="${a.is_correct ? 'ans-correct' : 'ans-wrong'}">回答: ${a.selected}</span>
+            ${!a.is_correct ? `<span class="ans-correct">正解: ${a.correct_ans}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('')}`;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+async function deleteSpiOne(id, name) {
+  if (!confirm(`「${name}」のSPIデータを削除しますか？`)) return;
+  await fetch(SB_URL + '/rest/v1/spi_results?id=eq.' + id, { method: 'DELETE', headers: SB_HEADERS });
+  renderSpiDash();
+}
+
+async function clearSpiData() {
+  if (confirm('SPI適性チェックの全データを削除しますか？この操作は取り消せません。')) {
+    await fetch(SB_URL + '/rest/v1/spi_results?id=neq.00000000-0000-0000-0000-000000000000', { method: 'DELETE', headers: SB_HEADERS });
+    renderSpiDash();
+  }
+}
+
+async function exportSpiCSV() {
+  const results = await loadSpiResults();
+  if (!results.length) { alert('データがありません'); return; }
+  const header = ['氏名','メール','受験日時','スコア','正答率(%)'];
+  // カテゴリ別正答数列を追加
+  const cats = [...new Set((results[0]?.answers_detail || []).map(a => a.category))];
+  const fullHeader = [...header, ...cats.map(c => c + ' 正答数')];
+  const rows = results.map(r => {
+    const catCorrect = cats.map(cat => (r.answers_detail || []).filter(a => a.category === cat && a.is_correct).length);
+    return [r.name, r.email, new Date(r.created_at).toLocaleString('ja-JP'), `${r.score}/${r.total}`, r.percentage, ...catCorrect];
+  });
+  const csv = [fullHeader, ...rows].map(row => row.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'SPI結果_' + new Date().toLocaleDateString('ja-JP').replace(/\//g,'') + '.csv';
+  a.click(); URL.revokeObjectURL(url);
 }
 
 async function exportCSV() {
