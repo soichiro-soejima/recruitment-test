@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AM適性チェック | Anomaly Marketing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Rubik:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #71BCE3;
+      --green: #9EC877;
+      --gray: #3E3A39;
+      --gradient: linear-gradient(135deg, #71BCE3 0%, #9EC877 100%);
+      --text: #3E3A39;
+      --text-sub: #7a7675;
+      --bg: #ffffff;
+      --bg-gray: #f5f5f4;
+      --border: #e5e3e2;
+      --danger: #ef4444;
+      --font-en: 'Rubik', sans-serif;
+      --font-jp: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: var(--font-jp); background: var(--bg-gray); color: var(--text); min-height: 100vh; }
+    .screen { display: none; }
+    .screen.active { display: flex; }
+
+    /* ===== LANDING ===== */
+    #screen-landing {
+      align-items: center; justify-content: center;
+      min-height: 100vh; padding: 2rem;
+    }
+    .card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+      padding: 2.5rem; width: 100%; max-width: 460px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .logo-mark {
+      width: 44px; height: 44px; background: var(--gradient); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.25rem; font-weight: 700; font-size: 1.1rem;
+      color: var(--gray); font-family: var(--font-en);
+    }
+    .card h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .card .sub { color: var(--text-sub); font-size: 0.82rem; margin-bottom: 1.5rem; }
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+      background: var(--bg-gray); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+    }
+    .info-item .lbl { font-size: 0.68rem; color: var(--text-sub); font-weight: 500; letter-spacing: 0.04em; margin-bottom: 0.15rem; }
+    .info-item .val { font-size: 0.88rem; font-weight: 700; font-family: var(--font-en); }
+    .form-group { margin-bottom: 1rem; }
+    label { display: block; font-size: 0.75rem; font-weight: 500; color: var(--text-sub); margin-bottom: 0.4rem; }
+    input[type="text"], input[type="email"] {
+      width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.7rem 0.875rem; color: var(--text); font-family: var(--font-jp);
+      font-size: 0.9rem; outline: none; transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--blue); }
+    input::placeholder { color: #bbb9b8; }
+    .notice-box {
+      background: #fff8f0; border: 1px solid #f5d9b0; border-radius: 4px;
+      padding: 1rem 1.25rem; margin-bottom: 1.25rem;
+      font-size: 0.78rem; line-height: 1.9; color: #7a5a30;
+    }
+    .notice-box .ntitle { font-weight: 700; margin-bottom: 0.3rem; color: #5a3a10; }
+    .btn-primary {
+      width: 100%; background: var(--gradient); color: var(--gray); border: none;
+      border-radius: 4px; padding: 0.875rem; font-family: var(--font-jp);
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      transition: opacity 0.15s; margin-top: 1rem;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+
+    /* ===== TEST ===== */
+    #screen-test { flex-direction: column; min-height: 100vh; }
+    .test-header {
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 0.875rem 1.5rem; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 10;
+    }
+    .test-logo { font-family: var(--font-en); font-weight: 700; font-size: 1rem; color: var(--gray); }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .q-counter { font-size: 0.78rem; color: var(--text-sub); }
+    .timer-wrap {
+      font-family: var(--font-en); font-size: 1rem; font-weight: 700;
+      background: var(--bg-gray); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.25rem 0.7rem; color: var(--text);
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .timer-wrap.warn { color: var(--danger); border-color: var(--danger); }
+    .progress-track { background: var(--border); height: 3px; }
+    .progress-fill { background: var(--gradient); height: 3px; transition: width 0.4s; }
+    .test-body {
+      flex: 1; display: flex; align-items: flex-start;
+      justify-content: center; padding: 2rem 1rem;
+    }
+    .q-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+      padding: 2rem; width: 100%; max-width: 640px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .q-meta { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem; }
+    .q-num { font-family: var(--font-en); font-size: 0.78rem; font-weight: 700; color: var(--text-sub); }
+    .q-cat {
+      font-size: 0.68rem; font-weight: 700; padding: 0.18rem 0.55rem;
+      border-radius: 3px; background: var(--bg-gray); color: var(--text-sub);
+      border: 1px solid var(--border);
+    }
+    .q-text { font-size: 0.93rem; line-height: 1.85; margin-bottom: 1.5rem; white-space: pre-wrap; }
+    .opts { display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.5rem; }
+    .opt-btn {
+      width: 100%; text-align: left; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.8rem 1rem; font-family: var(--font-jp);
+      font-size: 0.875rem; color: var(--text); cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      display: flex; align-items: flex-start; gap: 0.75rem; line-height: 1.6;
+    }
+    .opt-btn:hover { border-color: var(--blue); background: #f0faff; }
+    .opt-btn.selected { border-color: var(--blue); background: #e4f4ff; }
+    .opt-lbl {
+      font-family: var(--font-en); font-weight: 700; font-size: 0.82rem;
+      color: var(--blue); min-width: 1.1rem; flex-shrink: 0;
+    }
+    .btn-next {
+      width: 100%; background: var(--gradient); color: var(--gray); border: none;
+      border-radius: 4px; padding: 0.85rem; font-family: var(--font-jp);
+      font-size: 0.93rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-next:disabled { opacity: 0.38; cursor: not-allowed; }
+
+    /* ===== RESULT ===== */
+    #screen-result { align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+    .result-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
+      padding: 2.5rem; width: 100%; max-width: 540px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .result-card h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; }
+    .score-block { text-align: center; margin-bottom: 1.75rem; }
+    .score-pct {
+      font-family: var(--font-en); font-size: 4.5rem; font-weight: 700; line-height: 1;
+      background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .score-sub { font-size: 0.82rem; color: var(--text-sub); margin-top: 0.4rem; }
+    .cat-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .cat-table th {
+      text-align: left; padding: 0.45rem 0.75rem;
+      background: var(--bg-gray); border-bottom: 1px solid var(--border);
+      font-weight: 700; color: var(--text-sub); font-size: 0.72rem;
+    }
+    .cat-table td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); }
+    .bar-wrap { width: 80px; background: var(--border); border-radius: 2px; height: 5px; }
+    .bar-fill { background: var(--gradient); border-radius: 2px; height: 5px; }
+    .result-footer { text-align: center; margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-sub); }
+  </style>
+</head>
+<body>
+
+<!-- ===== LANDING ===== -->
+<div id="screen-landing" class="screen active">
+  <div class="card">
+    <div class="logo-mark">AM</div>
+    <h1>AM適性チェック</h1>
+    <p class="sub">アノマリーマーケティング株式会社</p>
+    <div class="info-grid">
+      <div class="info-item"><div class="lbl">問題数</div><div class="val">30問</div></div>
+      <div class="info-item"><div class="lbl">制限時間</div><div class="val">30分</div></div>
+      <div class="info-item"><div class="lbl">形式</div><div class="val">4択</div></div>
+      <div class="info-item"><div class="lbl">カテゴリ</div><div class="val">10種</div></div>
+    </div>
+    <div class="notice-box">
+      <div class="ntitle">受験上の注意</div>
+      <div>・パソコンでの受験を推奨します。スマートフォンは使用しないでください。</div>
+      <div>・インターネット検索・AIツールの使用は禁止です。</div>
+      <div>・30分の制限時間があります。時間切れで自動終了します。</div>
+      <div>・テスト中にページを更新しないでください。</div>
+    </div>
+    <div class="form-group">
+      <label>お名前</label>
+      <input type="text" id="inp-name" placeholder="山田 太郎">
+    </div>
+    <div class="form-group">
+      <label>メールアドレス</label>
+      <input type="email" id="inp-email" placeholder="yamada@example.com" autocomplete="off">
+    </div>
+    <button class="btn-primary" onclick="startTest()">テストを開始する →</button>
+  </div>
+</div>
+
+<!-- ===== TEST ===== -->
+<div id="screen-test" class="screen">
+  <div class="test-header">
+    <span class="test-logo">AM</span>
+    <div class="header-right">
+      <span class="q-counter" id="q-counter">1 / 30</span>
+      <span class="timer-wrap" id="timer">30:00</span>
+    </div>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="prog" style="width:0%"></div>
+  </div>
+  <div class="test-body">
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-num" id="q-num">問 1</span>
+        <span class="q-cat" id="q-cat"></span>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <div class="opts" id="opts"></div>
+      <button class="btn-next" id="btn-next" disabled onclick="nextQ()">次の問題へ →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="screen-result" class="screen">
+  <div class="result-card">
+    <div class="logo-mark">AM</div>
+    <h1>テスト完了</h1>
+    <div class="score-block">
+      <div class="score-pct" id="score-pct">--%</div>
+      <div class="score-sub" id="score-sub">30問中 --問正解</div>
+    </div>
+    <table class="cat-table">
+      <thead>
+        <tr><th>カテゴリ</th><th>正答数</th><th></th></tr>
+      </thead>
+      <tbody id="cat-tbody"></tbody>
+    </table>
+    <p class="result-footer">回答を送信しました。ありがとうございました。</p>
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://swctifktqmrdvbinybgk.supabase.co';
+const SB_KEY = 'sb_publishable_kOoqHI0ni3sjD_WKi6HfcQ_F1HntHq4';
+
+const QS = [
+  // 言語 - 同意語
+  {cat:'言語 - 同意語', q:'「逡巡（しゅんじゅん）」の同意語は？', opts:['躊躇（ちゅうちょ）','決断','勇気','前進'], ans:0},
+  {cat:'言語 - 同意語', q:'「稀有（けう）」の同意語は？', opts:['普通','多数','珍しい','当然'], ans:2},
+  {cat:'言語 - 同意語', q:'「卓越（たくえつ）」の同意語は？', opts:['平凡','群を抜いて優秀','標準的','普通'], ans:1},
+  // 言語 - 対義語
+  {cat:'言語 - 対義語', q:'「抽象」の対義語は？', opts:['具体','概念','観念','理念'], ans:0},
+  {cat:'言語 - 対義語', q:'「繁栄」の対義語は？', opts:['発展','成長','停滞','衰退'], ans:3},
+  {cat:'言語 - 対義語', q:'「緊張」の対義語は？', opts:['不安','集中','弛緩（しかん）','興奮'], ans:2},
+  // 言語 - 語句の意味
+  {cat:'言語 - 語句の意味', q:'「一石二鳥」の意味として正しいものは？', opts:['一つのことに全力を尽くす','一つの行動で二つの利益を得る','二人で協力して一目標を達成する','一度失敗しても二度目は成功する'], ans:1},
+  {cat:'言語 - 語句の意味', q:'「杞憂（きゆう）」の意味として正しいものは？', opts:['深い悲しみ','取り越し苦労','強い怒り','激しい喜び'], ans:1},
+  {cat:'言語 - 語句の意味', q:'「烏合の衆（うごうのしゅう）」の意味として正しいものは？', opts:['統率のとれた精鋭集団','規律なく集まった無秩序な群衆','賢くて行動力のある集団','目標に向かって団結する人々'], ans:1},
+  // 言語 - 文章整序
+  {cat:'言語 - 文章整序', q:'次の①〜④を自然な順に並べたものはどれか？\n①そのため、適度な睡眠は健康維持に欠かせない。\n②睡眠中、体は細胞の修復や記憶の整理を行う。\n③現代人は睡眠不足になりがちだという。\n④しかし、睡眠の質を高めることで改善できる。', opts:['③②①④','②①③④','①③②④','③①②④'], ans:0},
+  {cat:'言語 - 文章整序', q:'次の①〜④を自然な順に並べたものはどれか？\n①まず現状の課題を明確にする必要がある。\n②次に、具体的な解決策を検討する。\n③問題解決には一定の手順が必要だ。\n④最後に、実行と評価を繰り返す。', opts:['③①②④','①②③④','①③②④','③②①④'], ans:0},
+  {cat:'言語 - 文章整序', q:'次の①〜④を自然な順に並べたものはどれか？\n①その結果、売上は前年比20%増を達成した。\n②新しいマーケティング戦略を導入した。\n③そこで、経営陣は大胆な方針転換を決断した。\n④昨年、会社は業績不振に悩んでいた。', opts:['①②③④','④③②①','②③④①','③①④②'], ans:1},
+  // 非言語 - 割合・計算
+  {cat:'非言語 - 割合・計算', q:'ある数を3倍して12を引いたら18になった。その数は？', opts:['6','8','10','12'], ans:2},
+  {cat:'非言語 - 割合・計算', q:'ある仕事をAは6日、Bは3日で完成できる。二人で行うと何日かかる？', opts:['2日','2.5日','3日','4日'], ans:0},
+  {cat:'非言語 - 割合・計算', q:'定価の25%引きで売っても原価の20%の利益が出る。定価は原価の何%？', opts:['130%','140%','150%','160%'], ans:3},
+  // 非言語 - 速さ・時間
+  {cat:'非言語 - 速さ・時間', q:'長さ200mの列車が時速72kmで走っている。800mのトンネルを通過するのに何秒かかる？', opts:['40秒','45秒','50秒','55秒'], ans:2},
+  {cat:'非言語 - 速さ・時間', q:'兄が自転車で出発して10分後に弟が同方向に出発した。兄は60m/分、弟は90m/分。弟が兄に追いつくのは弟出発から何分後？', opts:['15分','20分','25分','30分'], ans:1},
+  {cat:'非言語 - 速さ・時間', q:'行きは時速4km、帰りは時速6kmで同じ道を往復した。平均速度は？', opts:['4.5km/h','4.8km/h','5.0km/h','5.2km/h'], ans:1},
+  // 非言語 - 確率
+  {cat:'非言語 - 確率', q:'赤玉3個・白玉2個の袋から2個同時に取り出す。2個とも赤の確率は？', opts:['1/5','3/10','2/5','3/5'], ans:1},
+  {cat:'非言語 - 確率', q:'3人でじゃんけんを1回する。あいこになる確率は？', opts:['1/4','1/3','1/2','2/3'], ans:1},
+  {cat:'非言語 - 確率', q:'コインを3回投げて少なくとも1回表が出る確率は？', opts:['3/4','5/6','7/8','15/16'], ans:2},
+  // 非言語 - 推論
+  {cat:'非言語 - 推論', q:'P,Q,Rの3人が走った。「PはQより速い」「RはPより遅い」「QはRより速い」のとき、速い順に正しいものは？', opts:['P, Q, R','P, R, Q','Q, P, R','Q, R, P'], ans:0},
+  {cat:'非言語 - 推論', q:'「雨が降れば傘を持つ」が真のとき、必ず正しいものは？', opts:['傘を持っているので雨が降っている','傘を持っていないので雨が降っていない','雨が降っていないので傘を持っていない','傘を持てば雨が降る'], ans:1},
+  {cat:'非言語 - 推論', q:'「AはBより背が高い」「CはAより背が高い」「BはDより背が高い」「DはEより背が高い」のとき、2番目に背が高いのは？', opts:['A','B','C','D'], ans:0},
+  // 非言語 - 集合
+  {cat:'非言語 - 集合', q:'100人中、数学が好きな人50人、英語が好きな人40人、両方好きな人20人。どちらも好きでない人は？', opts:['20人','25人','30人','35人'], ans:2},
+  {cat:'非言語 - 集合', q:'100人で映画を見た人70人、本を読んだ人60人。両方した人の最小人数は？', opts:['20人','25人','30人','35人'], ans:2},
+  {cat:'非言語 - 集合', q:'200人で体育が好きな人100人、音楽が好きな人80人、どちらも好きでない人30人。両方好きな人は？', opts:['5人','8人','10人','15人'], ans:2},
+  // 非言語 - 図表読解
+  {cat:'非言語 - 図表読解', q:'4月の売上が100万円で毎月10%ずつ増加するとき、6月の売上はいくら？', opts:['110万円','115万円','120万円','121万円'], ans:3},
+  {cat:'非言語 - 図表読解', q:'5人の点数が68点, 75点, 82点, 61点, 74点だった。平均点は？', opts:['70点','71点','72点','73点'], ans:2},
+  {cat:'非言語 - 図表読解', q:'100人中男性60人・女性40人。男性の満足度70%、女性の満足度80%のとき、全体の満足度は？', opts:['72%','73%','74%','75%'], ans:2},
+];
+
+const LABELS = ['A', 'B', 'C', 'D'];
+let S = { name:'', email:'', qIdx:0, answers:[], selected:null, totalSec:1800, timerInterval:null };
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startTest() {
+  const name = document.getElementById('inp-name').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  if (!name || !email) { alert('氏名とメールアドレスを入力してください'); return; }
+  S.name = name; S.email = email; S.qIdx = 0; S.answers = [];
+  show('screen-test');
+  renderQ();
+  startTimer();
+}
+
+function startTimer() {
+  S.timerInterval = setInterval(() => {
+    S.totalSec--;
+    const m = Math.floor(S.totalSec / 60);
+    const s = S.totalSec % 60;
+    const el = document.getElementById('timer');
+    el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if (S.totalSec <= 60) el.classList.add('warn');
+    if (S.totalSec <= 0) { clearInterval(S.timerInterval); finishTest(); }
+  }, 1000);
+}
+
+function renderQ() {
+  const q = QS[S.qIdx];
+  const n = S.qIdx + 1;
+  document.getElementById('q-counter').textContent = `${n} / ${QS.length}`;
+  document.getElementById('q-num').textContent = `問 ${n}`;
+  document.getElementById('q-cat').textContent = q.cat;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('prog').style.width = `${(S.qIdx / QS.length) * 100}%`;
+
+  const container = document.getElementById('opts');
+  container.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-lbl">${LABELS[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectOpt(i);
+    container.appendChild(btn);
+  });
+
+  S.selected = null;
+  const btnNext = document.getElementById('btn-next');
+  btnNext.disabled = true;
+  btnNext.textContent = n === QS.length ? '回答を送信する ✓' : '次の問題へ →';
+}
+
+function selectOpt(i) {
+  S.selected = i;
+  document.querySelectorAll('.opt-btn').forEach((btn, idx) => btn.classList.toggle('selected', idx === i));
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQ() {
+  S.answers.push(S.selected !== null ? S.selected : -1);
+  if (S.qIdx < QS.length - 1) {
+    S.qIdx++;
+    renderQ();
+  } else {
+    clearInterval(S.timerInterval);
+    finishTest();
+  }
+}
+
+function finishTest() {
+  while (S.answers.length < QS.length) S.answers.push(-1);
+  showResult();
+  saveResult();
+  show('screen-result');
+}
+
+function showResult() {
+  const correct = QS.filter((q, i) => S.answers[i] === q.ans).length;
+  const pct = Math.round(correct / QS.length * 100);
+  document.getElementById('score-pct').textContent = `${pct}%`;
+  document.getElementById('score-sub').textContent = `${QS.length}問中 ${correct}問正解`;
+
+  const cats = {};
+  QS.forEach((q, i) => {
+    if (!cats[q.cat]) cats[q.cat] = { correct:0, total:0 };
+    cats[q.cat].total++;
+    if (S.answers[i] === q.ans) cats[q.cat].correct++;
+  });
+
+  const tbody = document.getElementById('cat-tbody');
+  tbody.innerHTML = '';
+  Object.entries(cats).forEach(([cat, v]) => {
+    const p = Math.round(v.correct / v.total * 100);
+    tbody.innerHTML += `<tr>
+      <td>${cat}</td>
+      <td style="font-family:var(--font-en);font-weight:700">${v.correct} / ${v.total}</td>
+      <td><div class="bar-wrap"><div class="bar-fill" style="width:${p}%"></div></div></td>
+    </tr>`;
+  });
+}
+
+async function saveResult() {
+  const correct = QS.filter((q, i) => S.answers[i] === q.ans).length;
+  const detail = QS.map((q, i) => ({
+    category: q.cat,
+    question: q.q.slice(0, 60),
+    selected: S.answers[i] >= 0 ? q.opts[S.answers[i]] : '未回答',
+    correct_ans: q.opts[q.ans],
+    is_correct: S.answers[i] === q.ans
+  }));
+  try {
+    await fetch(`${SB_URL}/rest/v1/spi_results`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${SB_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        name: S.name,
+        email: S.email,
+        score: correct,
+        total: QS.length,
+        percentage: Math.round(correct / QS.length * 100),
+        answers_detail: detail
+      })
+    });
+  } catch(e) { console.error(e); }
+}
+</script>
+</body>
+</html>
