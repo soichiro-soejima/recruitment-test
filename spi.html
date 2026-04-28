@@ -282,7 +282,7 @@ const QS = [
 ];
 
 const LABELS = ['A', 'B', 'C', 'D'];
-let S = { name:'', email:'', qIdx:0, answers:[], selected:null, totalSec:1800, timerInterval:null };
+let S = { name:'', email:'', qIdx:0, answers:[], timeTaken:[], qStartTime:null, selected:null, totalSec:1800, timerInterval:null };
 
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -293,7 +293,7 @@ function startTest() {
   const name = document.getElementById('inp-name').value.trim();
   const email = document.getElementById('inp-email').value.trim();
   if (!name || !email) { alert('氏名とメールアドレスを入力してください'); return; }
-  S.name = name; S.email = email; S.qIdx = 0; S.answers = [];
+  S.name = name; S.email = email; S.qIdx = 0; S.answers = []; S.timeTaken = [];
   show('screen-test');
   renderQ();
   startTimer();
@@ -331,6 +331,7 @@ function renderQ() {
   });
 
   S.selected = null;
+  S.qStartTime = Date.now();
   const btnNext = document.getElementById('btn-next');
   btnNext.disabled = true;
   btnNext.textContent = n === QS.length ? '回答を送信する ✓' : '次の問題へ →';
@@ -343,6 +344,7 @@ function selectOpt(i) {
 }
 
 function nextQ() {
+  S.timeTaken.push(S.qStartTime ? Math.round((Date.now() - S.qStartTime) / 1000) : 0);
   S.answers.push(S.selected !== null ? S.selected : -1);
   if (S.qIdx < QS.length - 1) {
     S.qIdx++;
@@ -354,7 +356,7 @@ function nextQ() {
 }
 
 function finishTest() {
-  while (S.answers.length < QS.length) S.answers.push(-1);
+  while (S.answers.length < QS.length) { S.answers.push(-1); S.timeTaken.push(0); }
   showResult();
   saveResult();
   show('screen-result');
@@ -392,7 +394,8 @@ async function saveResult() {
     question: q.q.slice(0, 60),
     selected: S.answers[i] >= 0 ? q.opts[S.answers[i]] : '未回答',
     correct_ans: q.opts[q.ans],
-    is_correct: S.answers[i] === q.ans
+    is_correct: S.answers[i] === q.ans,
+    time_seconds: S.timeTaken[i] || 0
   }));
   try {
     await fetch(`${SB_URL}/rest/v1/spi_results`, {

@@ -442,13 +442,35 @@ async function renderSpiDash() {
     });
   });
 
+  // 問題ごとの平均回答時間
+  const qTimeMap = {};
+  results.forEach(r => {
+    (r.answers_detail || []).forEach((a, i) => {
+      const key = `問${i+1}`;
+      if (!qTimeMap[key]) qTimeMap[key] = [];
+      if (a.time_seconds != null) qTimeMap[key].push(a.time_seconds);
+    });
+  });
+  const qTimeAvg = Object.entries(qTimeMap).map(([k, times]) => {
+    if (!times.length) return { label: k, val: '—' };
+    const avg = Math.round(times.reduce((s,t) => s+t, 0) / times.length);
+    return { label: k, val: `${Math.floor(avg/60)}:${String(avg%60).padStart(2,'0')}` };
+  });
+
   document.getElementById('spi-stats').innerHTML = `
     <div class="stat-card"><div class="stat-label">受験者数</div><div class="stat-val">${count}</div></div>
     <div class="stat-card"><div class="stat-label">平均スコア</div><div class="stat-val">${avgPct}%</div></div>
     ${Object.entries(catStats).map(([cat, v]) => {
       const p = Math.round(v.correct / v.total * 100);
       return `<div class="stat-card"><div class="stat-label">${cat} 正答率</div><div class="stat-val" style="font-size:1.2rem">${p}%</div></div>`;
-    }).join('')}`;
+    }).join('')}
+    ${count ? `<div class="stat-card" style="grid-column:1/-1">
+      <div class="stat-label" style="margin-bottom:0.6rem">問題別 平均回答時間（分:秒）</div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem">
+        ${qTimeAvg.map(q => `<span style="background:var(--bg-gray);border:1px solid var(--border);border-radius:3px;padding:0.2rem 0.6rem;font-size:0.78rem"><span style="color:var(--text-sub)">${q.label}</span> <strong style="font-family:var(--font-en)">${q.val}</strong></span>`).join('')}
+      </div>
+    </div>` : ''}
+  `;
 
   const tbody = document.getElementById('spi-tbody');
   if (!count) {
@@ -479,10 +501,15 @@ function showSpiDetail(idx) {
     ${detail.map((a, i) => {
       const cls = a.is_correct ? 'correct' : (a.selected === '未回答' ? 'unanswered' : 'wrong');
       const icon = a.is_correct ? '○' : (a.selected === '未回答' ? '—' : '✕');
+      const sec = a.time_seconds != null ? a.time_seconds : null;
+      const timeLabel = sec != null ? `${Math.floor(sec/60)}分${sec%60}秒` : '—';
       return `<div class="answer-row">
         <div class="answer-num ${cls}">${icon}</div>
         <div class="answer-content">
-          <div class="answer-cat">${a.category} ― 問${i+1}</div>
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;flex-wrap:wrap">
+            <div class="answer-cat" style="margin-bottom:0">${a.category} ― 問${i+1}</div>
+            <div style="font-size:0.65rem;color:var(--text-sub);background:var(--bg-gray);border:1px solid var(--border);border-radius:3px;padding:0.1rem 0.4rem">⏱ ${timeLabel}</div>
+          </div>
           <div class="answer-text">${a.question}…</div>
           <div class="answer-detail">
             <span class="${a.is_correct ? 'ans-correct' : 'ans-wrong'}">回答: ${a.selected}</span>
