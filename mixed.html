@@ -258,9 +258,7 @@
       <div>・電卓・紙・ペンの使用は問題ありません。</div>
       <div>・選択式は1問につき1分の制限時間があります。時間切れで自動的に次の問題に進みます。</div>
       <div>・自由記述は1問につき6分の制限時間があります。</div>
-      <div>・テスト中にページを更新しないでください。</div>
-      <div>・タブの切り替えはシステムで検知されます。</div>
-      <div>・テスト中にページを更新すると試験が停止します。更新しないでください。</div>
+      <div>・タブの切り替え・ページの更新はシステムで検知・記録されます。</div>
     </div>
     <div class="form-group">
       <label>お名前</label>
@@ -706,6 +704,16 @@ document.addEventListener('visibilitychange', () => {
     w.classList.add('show');
     setTimeout(() => w.classList.remove('show'), 3000);
   }
+});
+
+window.addEventListener('beforeunload', (e) => {
+  const testActive = document.getElementById('screen-test').classList.contains('active');
+  if (!testActive) return;
+  S.tabSwitches++;
+  const w = document.getElementById('tab-warning');
+  if (w) { w.classList.add('show'); setTimeout(() => w.classList.remove('show'), 3000); }
+  e.preventDefault();
+  e.returnValue = '';
 });
 </script>
 </body>
