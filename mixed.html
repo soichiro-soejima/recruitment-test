@@ -540,8 +540,6 @@ function finishSpiPhase() {
     const q = S.spiQs[S.spiAnswers.length];
     S.spiAnswers.push({ cat: q.cat, question: q.q.slice(0,60), selected: '未回答', correct_ans: q.opts[q.ans], is_correct: false, time_seconds: 0 });
   }
-  const correct = S.spiAnswers.filter(a => a.is_correct).length;
-  document.getElementById('break-score').textContent = `${correct} / ${S.spiQs.length}`;
   showScreen('screen-phase-break');
 }
 
