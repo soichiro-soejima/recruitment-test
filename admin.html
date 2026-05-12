@@ -587,6 +587,27 @@ async function loadMixedResults() {
   } catch { return []; }
 }
 
+const CAT_ORDER = ['推論', '文章整序', '確率', '数列', '集合'];
+
+function calcCatScores(spiAnswers) {
+  const scores = {};
+  CAT_ORDER.forEach(c => scores[c] = { correct: 0, total: 0 });
+  (spiAnswers || []).forEach(a => {
+    if (scores[a.cat]) { scores[a.cat].total++; if (a.is_correct) scores[a.cat].correct++; }
+  });
+  return scores;
+}
+
+function renderCatChips(catScores) {
+  const SHORT = { '推論': '推論', '文章整序': '整序', '確率': '確率', '数列': '数列', '集合': '集合' };
+  return CAT_ORDER.map(c => {
+    const s = catScores[c];
+    if (s.total === 0) return '';
+    const color = s.correct === s.total ? 'var(--success)' : s.correct === 0 ? 'var(--danger)' : '#f59e0b';
+    return `<span style="font-size:0.65rem;padding:0.1rem 0.4rem;border-radius:3px;background:var(--bg-gray);border:1px solid var(--border);color:${color};font-weight:700">${SHORT[c]} ${s.correct}/${s.total}</span>`;
+  }).join('');
+}
+
 function calcMixedQStats(results) {
   const stats = Array.from({length: 15}, () => ({ cat: '', correct: 0, total: 0, timeSum: 0, timeCount: 0 }));
   results.forEach(r => {
@@ -649,7 +670,10 @@ async function renderMixedDash() {
       <td>${r.name}</td>
       <td style="color:var(--text-sub)">${r.email}</td>
       <td style="color:var(--text-sub);font-size:0.78rem">${new Date(r.created_at).toLocaleString('ja-JP')}</td>
-      <td><span class="score-total">${r.spi_score}/${r.spi_total}</span> <span style="color:var(--text-sub);font-size:0.78rem">(${Math.round(r.spi_score/r.spi_total*100)}%)</span></td>
+      <td>
+        <div><span class="score-total">${r.spi_score}/${r.spi_total}</span> <span style="color:var(--text-sub);font-size:0.78rem">(${Math.round(r.spi_score/r.spi_total*100)}%)</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.25rem;margin-top:0.3rem">${renderCatChips(calcCatScores(r.spi_answers))}</div>
+      </td>
       <td>${r.tab_switches > 0 ? `<span class="tab-badge">⚠ ${r.tab_switches}回</span>` : `<span style="color:var(--text-sub)">なし</span>`}</td>
       <td><button class="btn-detail" onclick="showMixedDetail(${idx})">詳細</button></td>
       <td><button class="btn-detail" style="border-color:rgba(239,68,68,0.3);color:var(--danger)" onclick="deleteMixedOne('${r.id}', '${r.name}')">削除</button></td>
@@ -663,7 +687,18 @@ function showMixedDetail(idx) {
   const spi = r.spi_answers || [];
   const free = r.free_answers || [];
 
+  const catScores = calcCatScores(spi);
+  const catGrid = CAT_ORDER.map(c => {
+    const s = catScores[c];
+    const color = s.total === 0 ? 'var(--text-sub)' : s.correct === s.total ? 'var(--success)' : s.correct === 0 ? 'var(--danger)' : '#f59e0b';
+    return `<div style="text-align:center;background:var(--bg-gray);border:1px solid var(--border);border-radius:4px;padding:0.5rem 0.75rem">
+      <div style="font-size:0.65rem;color:var(--text-sub);margin-bottom:0.2rem">${c}</div>
+      <div style="font-size:1.1rem;font-weight:700;color:${color}">${s.total ? `${s.correct}/${s.total}` : '—'}</div>
+    </div>`;
+  }).join('');
+
   const spiHtml = `
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0.5rem;margin-bottom:1rem">${catGrid}</div>
     <div style="font-size:0.82rem;font-weight:700;color:var(--text-sub);margin:0.5rem 0 0.75rem;letter-spacing:0.04em">認知能力（${r.spi_score}/${r.spi_total}問正解）</div>
     ${spi.map((a, i) => {
       const cls = a.is_correct ? 'correct' : (a.selected === '未回答' ? 'unanswered' : 'wrong');
