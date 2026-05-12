@@ -258,7 +258,7 @@
       <div>・電卓・紙・ペンの使用は問題ありません。</div>
       <div>・選択式は1問につき1分の制限時間があります。時間切れで自動的に次の問題に進みます。</div>
       <div>・自由記述は1問につき6分の制限時間があります。</div>
-      <div>・タブの切り替え・ページの更新はシステムで検知・記録されます。</div>
+      <div>・タブの切り替えはシステムで検知されます。</div>
     </div>
     <div class="form-group">
       <label>お名前</label>
@@ -387,6 +387,7 @@ let S = {
   freeTimerSec: 360, freeTimerID: null,
   qStartTime: null, selected: null, timedOut: false,
   tabSwitches: 0,
+  submitted: false,
 };
 
 function shuffle(arr) {
@@ -664,6 +665,7 @@ function nextFreeQ() {
 
 // ===== FINISH =====
 async function finishTest() {
+  S.submitted = true;
   const spiCorrect = S.spiAnswers.filter(a => a.is_correct).length;
   document.getElementById('result-name').textContent = S.name + ' さん、お疲れさまでした。';
   showScreen('screen-result');
@@ -712,6 +714,21 @@ window.addEventListener('beforeunload', (e) => {
   S.tabSwitches++;
   const w = document.getElementById('tab-warning');
   if (w) { w.classList.add('show'); setTimeout(() => w.classList.remove('show'), 3000); }
+  if (!S.submitted && S.name && (S.spiAnswers.length > 0 || S.freeAnswers.length > 0)) {
+    const spiCorrect = S.spiAnswers.filter(a => a.is_correct).length;
+    fetch(SB_URL + '/rest/v1/mixed_results', {
+      method: 'POST',
+      headers: { ...SB_HEADERS, 'Prefer': 'return=minimal' },
+      body: JSON.stringify({
+        name: S.name, email: S.email,
+        spi_score: spiCorrect, spi_total: S.spiQs.length,
+        spi_answers: S.spiAnswers,
+        free_answers: S.freeAnswers,
+        tab_switches: S.tabSwitches,
+      }),
+      keepalive: true,
+    });
+  }
   e.preventDefault();
   e.returnValue = '';
 });
