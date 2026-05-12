@@ -240,12 +240,17 @@
       <button class="btn-outline" onclick="exportSpiCSV()">CSVエクスポート</button>
       <button class="btn-outline btn-red" onclick="clearSpiData()">データ削除</button>
     </div>
+    <div class="dash-actions" id="header-actions-mixed" style="display:none">
+      <button class="btn-outline" onclick="exportMixedCSV()">CSVエクスポート</button>
+      <button class="btn-outline btn-red" onclick="clearMixedData()">データ削除</button>
+    </div>
   </div>
 
   <!-- タブ -->
   <div class="tab-nav">
     <button class="tab-btn active" id="tab-am" onclick="switchTab('am')">AM検定</button>
     <button class="tab-btn" id="tab-spi" onclick="switchTab('spi')">SPI適性チェック</button>
+    <button class="tab-btn" id="tab-mixed" onclick="switchTab('mixed')">Webテスト</button>
   </div>
 
   <!-- AM検定タブ -->
@@ -261,6 +266,24 @@
             </tr>
           </thead>
           <tbody id="dash-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Webテストタブ -->
+  <div class="tab-content" id="content-mixed">
+    <div class="dash-body">
+      <div class="dash-stats" id="mixed-stats"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>氏名</th><th>メール</th><th>受験日時</th>
+              <th>認知能力</th><th>タブ切替</th><th>詳細</th><th>削除</th>
+            </tr>
+          </thead>
+          <tbody id="mixed-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -308,6 +331,7 @@ function checkPw() {
   document.getElementById('screen-dash').classList.add('active');
   renderDash();
   renderSpiDash();
+  renderMixedDash();
 }
 checkPw();
 
@@ -318,6 +342,7 @@ function switchTab(tab) {
   document.getElementById('content-' + tab).classList.add('active');
   document.getElementById('header-actions-am').style.display = tab === 'am' ? '' : 'none';
   document.getElementById('header-actions-spi').style.display = tab === 'spi' ? '' : 'none';
+  document.getElementById('header-actions-mixed').style.display = tab === 'mixed' ? '' : 'none';
 }
 
 async function loadResults() {
@@ -550,6 +575,128 @@ async function exportSpiCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = 'SPI結果_' + new Date().toLocaleDateString('ja-JP').replace(/\//g,'') + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ===== MIXED =====
+async function loadMixedResults() {
+  try {
+    const res = await fetch(SB_URL + '/rest/v1/mixed_results?order=created_at.desc', { headers: SB_HEADERS });
+    return await res.json();
+  } catch { return []; }
+}
+
+async function renderMixedDash() {
+  const results = await loadMixedResults();
+  const count = results.length;
+  const avgSpi = count ? (results.reduce((s, r) => s + (r.spi_score || 0), 0) / count).toFixed(1) : '—';
+
+  document.getElementById('mixed-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">受験者数</div><div class="stat-val">${count}</div></div>
+    <div class="stat-card"><div class="stat-label">認知能力 平均正答数</div><div class="stat-val" style="font-size:1.4rem">${avgSpi} / 15</div></div>`;
+
+  const tbody = document.getElementById('mixed-tbody');
+  if (!count) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><div>まだ受験データがありません</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = results.map((r, idx) => `
+    <tr>
+      <td>${r.name}</td>
+      <td style="color:var(--text-sub)">${r.email}</td>
+      <td style="color:var(--text-sub);font-size:0.78rem">${new Date(r.created_at).toLocaleString('ja-JP')}</td>
+      <td><span class="score-total">${r.spi_score}/${r.spi_total}</span> <span style="color:var(--text-sub);font-size:0.78rem">(${Math.round(r.spi_score/r.spi_total*100)}%)</span></td>
+      <td>${r.tab_switches > 0 ? `<span class="tab-badge">⚠ ${r.tab_switches}回</span>` : `<span style="color:var(--text-sub)">なし</span>`}</td>
+      <td><button class="btn-detail" onclick="showMixedDetail(${idx})">詳細</button></td>
+      <td><button class="btn-detail" style="border-color:rgba(239,68,68,0.3);color:var(--danger)" onclick="deleteMixedOne('${r.id}', '${r.name}')">削除</button></td>
+    </tr>`).join('');
+  window._mixedResults = results;
+}
+
+function showMixedDetail(idx) {
+  const r = window._mixedResults[idx];
+  document.getElementById('modal-title').textContent = r.name + ' さん ― Webテスト詳細';
+  const spi = r.spi_answers || [];
+  const free = r.free_answers || [];
+
+  const spiHtml = `
+    <div style="font-size:0.82rem;font-weight:700;color:var(--text-sub);margin:0.5rem 0 0.75rem;letter-spacing:0.04em">認知能力（${r.spi_score}/${r.spi_total}問正解）</div>
+    ${spi.map((a, i) => {
+      const cls = a.is_correct ? 'correct' : (a.selected === '未回答' ? 'unanswered' : 'wrong');
+      const icon = a.is_correct ? '○' : (a.selected === '未回答' ? '—' : '✕');
+      const timeLabel = a.time_seconds != null ? `${Math.floor(a.time_seconds/60)}:${String(a.time_seconds%60).padStart(2,'0')}` : '—';
+      return `<div class="answer-row">
+        <div class="answer-num ${cls}">${icon}</div>
+        <div class="answer-content">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;flex-wrap:wrap">
+            <div class="answer-cat" style="margin-bottom:0">${a.cat} ― 問${i+1}</div>
+            <div style="font-size:0.65rem;color:var(--text-sub);background:var(--bg-gray);border:1px solid var(--border);border-radius:3px;padding:0.1rem 0.4rem">⏱ ${timeLabel}</div>
+          </div>
+          <div class="answer-text">${a.question}…</div>
+          <div class="answer-detail">
+            <span class="${a.is_correct ? 'ans-correct' : 'ans-wrong'}">回答: ${a.selected}</span>
+            ${!a.is_correct ? `<span class="ans-correct">正解: ${a.correct_ans}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('')}`;
+
+  const freeHtml = `
+    <div style="font-size:0.82rem;font-weight:700;color:var(--text-sub);margin:1.25rem 0 0.75rem;letter-spacing:0.04em;padding-top:1rem;border-top:2px solid var(--border)">自由記述</div>
+    ${free.map((a, i) => {
+      const isTimeout = a.answer && a.answer.startsWith('[時間切れ]');
+      const displayText = isTimeout ? a.answer.replace('[時間切れ] ', '').replace('[時間切れ]', '') : (a.answer || '未回答');
+      const timeLabel = a.time_seconds != null ? `${Math.floor(a.time_seconds/60)}分${a.time_seconds%60}秒` : '—';
+      return `<div class="answer-row">
+        <div class="answer-num unanswered" style="font-size:0.6rem;width:32px;height:32px">Q${i+1}</div>
+        <div class="answer-content">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;flex-wrap:wrap">
+            <div class="answer-cat" style="margin-bottom:0">${a.cat}</div>
+            <div style="font-size:0.65rem;color:var(--text-sub);background:var(--bg-gray);border:1px solid var(--border);border-radius:3px;padding:0.1rem 0.4rem">⏱ ${timeLabel}</div>
+            ${isTimeout ? `<div style="font-size:0.65rem;color:#fff;background:var(--danger);border-radius:3px;padding:0.1rem 0.5rem;font-weight:700">時間切れ</div>` : ''}
+          </div>
+          <div style="background:var(--bg-gray);border:1px solid var(--border);border-radius:4px;padding:0.75rem;margin-top:0.5rem;white-space:pre-wrap;line-height:1.8;font-size:0.85rem;color:var(--text)">${displayText}</div>
+        </div>
+      </div>`;
+    }).join('')}`;
+
+  document.getElementById('modal-body').innerHTML = spiHtml + freeHtml;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+async function deleteMixedOne(id, name) {
+  if (!confirm(`「${name}」のデータを削除しますか？`)) return;
+  await fetch(SB_URL + '/rest/v1/mixed_results?id=eq.' + id, { method: 'DELETE', headers: SB_HEADERS });
+  renderMixedDash();
+}
+
+async function clearMixedData() {
+  if (confirm('Webテストの全データを削除しますか？この操作は取り消せません。')) {
+    await fetch(SB_URL + '/rest/v1/mixed_results?id=neq.00000000-0000-0000-0000-000000000000', { method: 'DELETE', headers: SB_HEADERS });
+    renderMixedDash();
+  }
+}
+
+async function exportMixedCSV() {
+  const results = await loadMixedResults();
+  if (!results.length) { alert('データがありません'); return; }
+  const header = ['氏名','メール','受験日時','認知能力スコア','認知能力正答率(%)','タブ切替回数','自由記述Q1','自由記述Q2','自由記述Q3'];
+  const rows = results.map(r => {
+    const free = r.free_answers || [];
+    return [
+      r.name, r.email,
+      new Date(r.created_at).toLocaleString('ja-JP'),
+      `${r.spi_score}/${r.spi_total}`,
+      Math.round(r.spi_score / r.spi_total * 100),
+      r.tab_switches,
+      free[0]?.answer || '', free[1]?.answer || '', free[2]?.answer || '',
+    ];
+  });
+  const csv = [header, ...rows].map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'Webテスト結果_' + new Date().toLocaleDateString('ja-JP').replace(/\//g,'') + '.csv';
   a.click(); URL.revokeObjectURL(url);
 }
 
