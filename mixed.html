@@ -248,7 +248,7 @@
     <h1>Webテスト</h1>
     <p class="sub">アノマリーマーケティング株式会社</p>
     <div class="info-grid" style="grid-template-columns: repeat(2, 1fr);">
-      <div class="info-item"><div class="lbl">選択式</div><div class="val">15問（各2分）</div></div>
+      <div class="info-item"><div class="lbl">選択式</div><div class="val">15問（各1分）</div></div>
       <div class="info-item"><div class="lbl">自由記述</div><div class="val">3問（各6分）</div></div>
     </div>
     <div class="notice-box">
@@ -256,7 +256,7 @@
       <div>・パソコンでの受験を推奨します。スマートフォンは使用しないでください。</div>
       <div>・インターネット検索・AIツールの使用は禁止です。</div>
       <div>・電卓・紙・ペンの使用は問題ありません。</div>
-      <div>・選択式は1問につき2分の制限時間があります。時間切れで自動的に次の問題に進みます。</div>
+      <div>・選択式は1問につき1分の制限時間があります。時間切れで自動的に次の問題に進みます。</div>
       <div>・自由記述は1問につき6分の制限時間があります。</div>
       <div>・テスト中にページを更新しないでください。</div>
       <div>・タブの切り替えはシステムで検知されます。</div>
@@ -384,7 +384,7 @@ let S = {
   name: '', email: '',
   phase: 'spi',
   spiQs: [], spiIdx: 0, spiAnswers: [],
-  spiTimerSec: 120, spiTimerID: null,
+  spiTimerSec: 60, spiTimerID: null,
   freeIdx: 0, freeAnswers: [],
   freeTimerSec: 360, freeTimerID: null,
   qStartTime: null, selected: null, timedOut: false,
