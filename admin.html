@@ -232,7 +232,7 @@
     <div class="dash-title">
       採用テスト管理 <span class="dash-badge">Admin</span>
     </div>
-    <div class="dash-actions" id="header-actions-am">
+    <div class="dash-actions" id="header-actions-am" style="display:none">
       <button class="btn-outline" onclick="exportCSV()">CSVエクスポート</button>
       <button class="btn-outline btn-red" onclick="clearData()">データ削除</button>
     </div>
@@ -240,7 +240,7 @@
       <button class="btn-outline" onclick="exportSpiCSV()">CSVエクスポート</button>
       <button class="btn-outline btn-red" onclick="clearSpiData()">データ削除</button>
     </div>
-    <div class="dash-actions" id="header-actions-mixed" style="display:none">
+    <div class="dash-actions" id="header-actions-mixed">
       <button class="btn-outline" onclick="exportMixedCSV()">CSVエクスポート</button>
       <button class="btn-outline btn-red" onclick="clearMixedData()">データ削除</button>
     </div>
@@ -248,13 +248,13 @@
 
   <!-- タブ -->
   <div class="tab-nav">
-    <button class="tab-btn active" id="tab-am" onclick="switchTab('am')">AM検定</button>
+    <button class="tab-btn active" id="tab-mixed" onclick="switchTab('mixed')">Webテスト</button>
+    <button class="tab-btn" id="tab-am" onclick="switchTab('am')">AM検定</button>
     <button class="tab-btn" id="tab-spi" onclick="switchTab('spi')">SPI適性チェック</button>
-    <button class="tab-btn" id="tab-mixed" onclick="switchTab('mixed')">Webテスト</button>
   </div>
 
   <!-- AM検定タブ -->
-  <div class="tab-content active" id="content-am">
+  <div class="tab-content" id="content-am">
     <div class="dash-body">
       <div class="dash-stats" id="dash-stats"></div>
       <div class="table-wrap">
@@ -272,7 +272,7 @@
   </div>
 
   <!-- Webテストタブ -->
-  <div class="tab-content" id="content-mixed">
+  <div class="tab-content active" id="content-mixed">
     <div class="dash-body">
       <div class="dash-stats" id="mixed-stats"></div>
       <div class="table-wrap">
