@@ -499,7 +499,7 @@ function renderSpiQ() {
 
   const btnNext = document.getElementById('btn-next');
   btnNext.disabled = true;
-  btnNext.textContent = n < S.spiQs.length ? '次の問題へ →' : '認知能力テスト終了 →';
+  btnNext.textContent = n < S.spiQs.length ? '次の問題へ →' : '選択式テスト終了 →';
   btnNext.onclick = nextSpiQ;
 
   animateCard();
