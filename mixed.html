@@ -457,6 +457,7 @@ function drawSpiTimer() {
 function onSpiTimeout() {
   S.timedOut = true;
   document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  document.getElementById('btn-next').disabled = true;
   const card = document.getElementById('q-card');
   if (!card.querySelector('.timeout-overlay')) {
     const ov = document.createElement('div');
